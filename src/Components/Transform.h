@@ -35,6 +35,11 @@ namespace ShapeGame
         Vector2 accelerate;
     };
 
+    struct ScaleComponent
+    {
+        float scale;
+    };
+
     struct RotSpeedComponent
     {
         float speed;
