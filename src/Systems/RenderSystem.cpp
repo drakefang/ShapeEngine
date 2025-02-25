@@ -19,9 +19,15 @@ namespace ShapeGame
 
     void RenderSystem::GetVertices(std::vector<Vector2>& vertices, const Segment& segment, const Vector2& loc, float rot)
     {
-        Vector2 offset = {cosf(Deg2Rad(rot)) * segment.length, sinf(Deg2Rad(rot)) * segment.length};
-        Vector2 start = Vector2Subtract(loc, offset);
-        Vector2 end = Vector2Add(loc, offset);
+        Vector2 local_start = Vector2{-segment.length * 0.5f, 0};
+        local_start = Vector2Subtract(local_start, segment.offset);
+        local_start = Vector2Rotate(local_start, Deg2Rad(rot));
+        Vector2 local_end = Vector2{segment.length * 0.5f, 0};
+        local_end = Vector2Subtract(local_end, segment.offset);
+        local_end = Vector2Rotate(local_end, Deg2Rad(rot));
+
+        Vector2 start = Vector2Add(loc, local_start);
+        Vector2 end = Vector2Add(loc, local_end);
         const float halfThick = segment.thickness * 0.5f;
         const Vector2 dir = Vector2Normalize(Vector2Subtract(end, start));
         const Vector2 perpendicular = { -dir.y * halfThick, dir.x * halfThick };

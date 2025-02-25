@@ -18,8 +18,8 @@ int main(int argc, char** argv)
     auto render = std::make_unique<ShapeGame::RenderSystem>(registry);
 
     auto line = registry.create();
-    registry.emplace<ShapeGame::Segment>(line, 100.f, 10.f, true, RED);
-    registry.emplace<ShapeGame::Location>(line, Vector2{ 0.f, -100.f}); 
+    registry.emplace<ShapeGame::Segment>(line, Vector2{0.f, 0.f}, 100.f, 10.f, true, RED);
+    registry.emplace<ShapeGame::Location>(line, Vector2{ 0.f, 100.f}); 
     registry.emplace<ShapeGame::Rotation>(line, -30.f);
 
     while (!WindowShouldClose())

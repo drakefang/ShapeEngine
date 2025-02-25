@@ -17,10 +17,16 @@ namespace ShapeGame
 
     struct Segment
     {
-        float length;
-        float thickness;
-        bool has_cap;
-        Color color;
+        Vector2 offset = {0.f, 0.f};
+        float length = 100.f;
+        float thickness = 5.f;
+        bool has_cap = true;
+        Color color = BEIGE;
+    };
+
+    struct TriangleComp
+    {
+
     };
 
     using Triangle = Shape<3>;
