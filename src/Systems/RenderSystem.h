@@ -15,7 +15,8 @@ namespace ShapeGame
         virtual void Update(float DeltaTime) override;
 
     protected:
-        void GetVertices(std::vector<Vector2>& vertices, const struct Segment& segment, const Vector2& loc, float rot);
+        void GetVertices(std::vector<Vector2>& vertices, const struct SegmentComponent& segment, 
+            float thickness, const Vector2& loc, float rot, bool has_endcap);
 
     private:
         Camera2D camera;

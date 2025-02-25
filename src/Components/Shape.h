@@ -15,18 +15,29 @@ namespace ShapeGame
         bool has_cap;
     };
 
-    struct Segment
+    struct ThicknessComponent
     {
-        Vector2 offset = {0.f, 0.f};
-        float length = 100.f;
-        float thickness = 5.f;
-        bool has_cap = true;
-        Color color = BEIGE;
+        float thickness;
     };
 
-    struct TriangleComp
+    struct ColorComponent
     {
+        Color color;
+    };
 
+    struct EndCapComponent
+    {
+    };
+
+    struct SegmentComponent
+    {
+        float length = 100.f;
+    };
+
+    struct TriangleComponent
+    {
+        Vector2 LeftBottom;
+        Vector2 RightBottom;
     };
 
     using Triangle = Shape<3>;
