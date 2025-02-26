@@ -4,42 +4,33 @@
 #include "raylib.h"
 #include <array>
 
-namespace ShapeGame 
-{
-    template <int N> 
-    struct Shape 
-    {
-        std::array<Vector2, N> vertices;
-        Color color;
-        float thickness;
-        bool has_cap;
-    };
+namespace ShapeGame {
+template <int N> struct Shape {
+  std::array<Vector2, N> vertices;
+  Color color;
+  float thickness;
+  bool has_cap;
+};
 
-    struct ThicknessComponent
-    {
-        float thickness;
-    };
+struct ThicknessComponent {
+  float thickness;
+};
 
-    struct ColorComponent
-    {
-        Color color;
-    };
+struct ColorComponent {
+  Color color;
+};
 
-    struct EndCapComponent
-    {
-    };
+struct EndCapComponent {};
 
-    struct SegmentComponent
-    {
-        float length = 100.f;
-    };
+struct SegmentComponent {
+  float length = 100.f;
+};
 
-    struct TriangleComponent
-    {
-        Vector2 LeftBottom;
-        Vector2 RightBottom;
-    };
+struct TriangleComponent {
+  Vector2 LeftBottom;
+  Vector2 RightBottom;
+};
 
-    using Triangle = Shape<3>;
-    using Rectangle = Shape<4>;
+using Triangle = Shape<3>;
+using Rectangle = Shape<4>;
 } // namespace ShapeGame
