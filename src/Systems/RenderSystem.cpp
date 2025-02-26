@@ -18,7 +18,7 @@ namespace ShapeGame
     }
 
     void RenderSystem::GetVertices(std::vector<Vector2>& vertices, const SegmentComponent& segment, 
-        float thickness, const Vector2& loc, float rot, bool has_endcap)
+        float thickness, const Vector2& loc, float rot, bool hasThickness, bool hasEndcap)
     {
         Vector2 local_start = Vector2{-segment.length * 0.5f, 0};
         local_start = Vector2Rotate(local_start, Deg2Rad(rot));
@@ -27,6 +27,14 @@ namespace ShapeGame
 
         Vector2 start = Vector2Add(loc, local_start);
         Vector2 end = Vector2Add(loc, local_end);
+
+        if (!hasThickness)
+        {
+            vertices.push_back(start);
+            vertices.push_back(end);
+            return;
+        }
+
         const float halfThick = thickness * 0.5f;
         const Vector2 dir = Vector2Normalize(Vector2Subtract(end, start));
         const Vector2 perpendicular = { -dir.y * halfThick, dir.x * halfThick };
@@ -37,7 +45,7 @@ namespace ShapeGame
         vertices.push_back(Vector2Subtract(end, perpendicular));    // 上终点
         vertices.push_back(Vector2Add(end, perpendicular));   // 下终点
 
-        if (has_endcap) 
+        if (hasEndcap) 
         { // ===== 端点圆形（Triangle Fan） =====
             auto addCircle = [&](Vector2 center, float angleOffset) 
             {
@@ -79,19 +87,37 @@ namespace ShapeGame
         DrawLine(-1000.f, 0, 1000.f, 0, BLUE);
         DrawLine(0.f, -1000.f, 0.f, 1000.f, GREEN);
 
-        auto view = registry.view<SegmentComponent, LocationComponent, RotationComponent, ThicknessComponent, ColorComponent>();
-        view.each([this](const auto& entity, SegmentComponent segment, LocationComponent loc, RotationComponent rot, ThicknessComponent tc, ColorComponent c)
+        auto view = registry.view<SegmentComponent, LocationComponent, RotationComponent>();
+        view.each([this](const auto& entity, SegmentComponent segment, LocationComponent loc, RotationComponent rot)
         {
             std::vector<Vector2> vertices;
+            bool hasThickness = registry.any_of<ThicknessComponent>(entity);
             bool has_endcap = registry.any_of<EndCapComponent>(entity);
-            GetVertices(vertices, segment, tc.thickness, loc.pos, rot.rot, has_endcap);
-            // 绘制线段主体（Triangle Strip）
-            DrawTriangleStrip(vertices.data(), 4, c.color);
-            if (has_endcap)
+            const auto &tc = registry.get<ThicknessComponent>(entity);
+            Color c = BEIGE;
+            bool hasColor = registry.any_of<ColorComponent>(entity);
+            if (hasColor) 
             {
+              c = registry.get<ColorComponent>(entity).color;
+            }
+            GetVertices(vertices, segment, tc.thickness, loc.pos, rot.rot, true,
+                        has_endcap);
+            if (hasThickness) 
+            {
+              // 绘制线段主体（Triangle Strip）
+              DrawTriangleStrip(vertices.data(), 4, c);
+              if (has_endcap) 
+              {
                 // 绘制两个端点圆形（Triangle Fan）
-                DrawTriangleFan(vertices.data() + 4, CapSegmentCount + 2, c.color);
-                DrawTriangleFan(vertices.data() + 4 + CapSegmentCount + 2, CapSegmentCount + 2, c.color);
+                DrawTriangleFan(vertices.data() + 4, CapSegmentCount + 2,
+                                c);
+                DrawTriangleFan(vertices.data() + 4 + CapSegmentCount + 2,
+                                CapSegmentCount + 2, c);
+              }
+            }
+            else 
+            {
+                DrawLineStrip(vertices.data(), 2, c);
             }
         });
 

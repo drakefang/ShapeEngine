@@ -16,7 +16,7 @@ namespace ShapeGame
 
     protected:
         void GetVertices(std::vector<Vector2>& vertices, const struct SegmentComponent& segment, 
-            float thickness, const Vector2& loc, float rot, bool has_endcap);
+            float thickness, const Vector2& loc, float rot, bool hasThickness, bool hasEndcap);
 
     private:
         Camera2D camera;

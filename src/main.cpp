@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     registry.emplace<ShapeGame::SegmentComponent>(line, 100.f);
     registry.emplace<ShapeGame::LocationComponent>(line, Vector2{ 0.f, 100.f}); 
     registry.emplace<ShapeGame::RotationComponent>(line, -30.f);
-    registry.emplace<ShapeGame::ThicknessComponent>(line, 10.f);
+    //registry.emplace<ShapeGame::ThicknessComponent>(line, 10.f);
     registry.emplace<ShapeGame::EndCapComponent>(line);
     registry.emplace<ShapeGame::ColorComponent>(line, RED);
     registry.emplace<ShapeGame::RotSpeedComponent>(line, -180.f);
