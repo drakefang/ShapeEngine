@@ -4,35 +4,24 @@
 
 #include "raylib.h"
 
-namespace ShapeGame {
-// in world space
-struct LocationComponent {
-  Vector2 pos;
-};
+namespace ShapeGame
+{
+    struct TransformComponent
+    {
+        Vector2 pos;
+        float rot;
+        Vector2 scale;
+    };
 
-// in world space
-struct DirectionComponent {
-  Vector2 dir;
-};
+    struct VelocityComponent
+    {
+        Vector2 velocity;
+        Vector2 accelerate;
+    };
 
-// in world space
-struct RotationComponent {
-  float rot;
-};
-
-struct VelocityComponent {
-  Vector2 velocity;
-};
-
-struct AccelerateComponent {
-  Vector2 accelerate;
-};
-
-struct ScaleComponent {
-  float scale;
-};
-
-struct RotSpeedComponent {
-  float speed;
-};
+    struct RotatorComponent
+    {
+        float target;
+        float speed;
+    };
 } // namespace ShapeGame
