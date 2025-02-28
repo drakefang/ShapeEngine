@@ -1,12 +1,14 @@
 ﻿
 #include "Components/Shape.h"
 #include "Components/Transform.h"
+#include "Systems/System.h"
 #include "entt/entt.hpp"
 #include "raylib.h"
 
 #include "Systems/RenderSystem.h"
 #include "Systems/TransformSystem.h"
-#include <memory>
+
+using namespace ShapeGame;
 
 int main(int argc, char** argv)
 {
@@ -15,8 +17,8 @@ int main(int argc, char** argv)
     SetTargetFPS(60);
 
     entt::registry registry;
-    auto render = std::make_unique<ShapeGame::RenderSystem>(registry);
-    auto rot = std::make_unique<ShapeGame::TransformSystem>(registry);
+    System::AddSystem<RenderSystem>(registry);
+    System::AddSystem<TransformSystem>(registry);
 
     auto line = registry.create();
     registry.emplace<ShapeGame::SegmentComponent>(line, 100.f);
@@ -31,9 +33,7 @@ int main(int argc, char** argv)
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        render->Update(GetFrameTime());
-        rot->Update(GetFrameTime());
-
+        System::UpdateSystems(GetFrameTime());
         EndDrawing();
     }
     CloseWindow();
