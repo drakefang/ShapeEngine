@@ -3,9 +3,31 @@
 #include "TransformSystem.h"
 #include "Components/Transform.h"
 #include "raymath.h"
+#include <cfloat>
+#include <cmath>
 
 namespace ShapeGame
 {
+    float AngleDifference(float Current, float Target)
+    {
+        float Diff = fmodf(Target - Current, 360.f);
+        Diff = fmodf(Diff + 180.f, 360.f) - 180.f;
+        return Diff;
+    }
+
+    float AngleLerp(float Current, float Target, float Speed, float DeltaTime)
+    {
+        float Remaining = AngleDifference(Current, Target);
+
+        if (fabsf(Remaining) <= FLT_EPSILON)
+        {
+            return Target;
+        }
+
+        float Step = copysignf(fminf(fabsf(Remaining), Speed * DeltaTime), Remaining);
+        return fmodf(Current + Step + 360.f, 360.f);
+    }
+
     void TransformSystem::Update(float DeltaTime)
     {
         auto view = registry.view<TransformComponent, VelocityComponent>();
@@ -20,15 +42,7 @@ namespace ShapeGame
         view1.each(
             [DeltaTime](const auto& entity, TransformComponent& rc, RotatorComponent& rsc)
             {
-                rc.rot = Lerp(rc.rot, rsc.target, rsc.speed * DeltaTime);
-                if (rc.rot >= 360.f)
-                {
-                    rc.rot -= 360.f;
-                }
-                else if (rc.rot <= -360.f)
-                {
-                    rc.rot += 360.f;
-                }
+                rc.rot = AngleLerp(rc.rot, rsc.target, rsc.speed, DeltaTime);
             });
     }
 } // namespace ShapeGame
