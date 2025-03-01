@@ -7,7 +7,8 @@ set_languages("c++17")
 
 local requires = {
     "raylib 5.5",
-    "entt v3.14.0"
+    "entt v3.14.0",
+    "glm 1.0.1"
 }
 add_requires(requires)
 
@@ -15,6 +16,7 @@ target(project_name)
     set_kind("binary")
     add_packages("raylib")
     add_packages("entt")
+    add_packages("glm")
 
     add_includedirs("src")
 
