@@ -39,10 +39,7 @@ namespace ShapeGame
             });
 
         auto view1 = registry.view<TransformComponent, RotatorComponent>();
-        view1.each(
-            [DeltaTime](const auto& entity, TransformComponent& rc, RotatorComponent& rsc)
-            {
-                rc.rot = AngleLerp(rc.rot, rsc.target, rsc.speed, DeltaTime);
-            });
+        view1.each([DeltaTime](const auto& entity, TransformComponent& rc, RotatorComponent& rsc)
+                   { rc.rot = AngleLerp(rc.rot, rsc.target, rsc.speed, DeltaTime); });
     }
 } // namespace ShapeGame

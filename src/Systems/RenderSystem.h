@@ -6,10 +6,10 @@
 
 namespace ShapeGame
 {
-    class RenderSystem : public System
+    class RenderSystem_ : public System
     {
     public:
-        RenderSystem(entt::registry& reg);
+        RenderSystem_(entt::registry& reg);
         virtual void Update(float DeltaTime) override;
 
     protected:

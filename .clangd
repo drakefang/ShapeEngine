@@ -1,0 +1,8 @@
+# .clangd 核心配置
+Diagnostics:
+  UnusedIncludes: None       # 关闭头文件未使用警告
+
+CompileFlags:
+  Add: 
+    - "-std=c++20"          # 核心修复项
+    - "-Wno-c++98-compat"   # 可选：禁用C++98兼容警告

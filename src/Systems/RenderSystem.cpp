@@ -17,7 +17,7 @@ namespace ShapeGame
         return deg * PI / 180.f;
     }
 
-    void RenderSystem::GetVertices(
+    void RenderSystem_::GetVertices(
         std::vector<Vector2>& vertices,
         const SegmentComponent& segment,
         float thickness,
@@ -78,7 +78,7 @@ namespace ShapeGame
         */
     }
 
-    RenderSystem::RenderSystem(entt::registry& reg) : System(reg)
+    RenderSystem_::RenderSystem_(entt::registry& reg) : System(reg)
     {
         camera.target = {0.f, 0.f};
         camera.offset = {GetRenderWidth() * 0.5f, GetRenderHeight() * 0.5f};
@@ -86,7 +86,7 @@ namespace ShapeGame
         camera.zoom = 1.f;
     }
 
-    void RenderSystem::Update(float DeltaTime)
+    void RenderSystem_::Update(float DeltaTime)
     {
         BeginMode2D(camera);
 

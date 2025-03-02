@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 local project_name = "ShapeGame"
 
 set_project(project_name)
-set_languages("c++17")
+set_languages("c++20")
 
 local requires = {
     "raylib 5.5",
@@ -20,7 +20,6 @@ target(project_name)
 
     add_includedirs("src")
 
-    add_headerfiles("src/Components/*.h")
-    add_headerfiles("src/Systems/*.h")
-    add_files("src/Systems/*.cpp")
-    add_files("src/*.cpp")
+    add_headerfiles("src/**/*.h")
+    add_files("src/main.cpp")
+    add_files("src/**/*.cpp")

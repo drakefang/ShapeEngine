@@ -7,6 +7,7 @@ IndentWidth: 4                     # 4空格缩进（UE强制要求）
 UseTab: Never                      # 严格使用空格
 TabWidth: 4                        # 兼容性设置
 NamespaceIndentation: All
+InsertBraces: true                   # 强制添加大括号（Clang15+）
 
 # ========== 函数与参数排版 ==========
 AllowAllParametersOfDeclarationOnNextLine: false  # 参数必须换行

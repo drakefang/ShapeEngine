@@ -1,17 +1,39 @@
 ﻿
 #pragma once
 
+#include "glm/ext/vector_float2.hpp"
 #include "raylib.h"
-#include <array>
+#include "glm/vec4.hpp"
+#include "glm/vec2.hpp"
+#include <vector>
 
 namespace ShapeGame
 {
-    template <int N> struct Shape
+    struct BaseGeometryComponent
     {
-        std::array<Vector2, N> vertices;
-        Color color;
-        float thickness;
-        bool has_cap;
+        glm::vec4 color{1.0f};
+    };
+
+    struct LineSegmentComponent : public BaseGeometryComponent
+    {
+        glm::vec2 start;
+        glm::vec2 end;
+    };
+
+    struct QuadComponent : public BaseGeometryComponent
+    {
+        glm::vec2 size{1.f};
+    };
+
+    struct CircleComponent : public BaseGeometryComponent
+    {
+        float radius = 1.f;
+        uint32_t segments = 32;
+    };
+
+    struct PolygonComponent : public BaseGeometryComponent
+    {
+        std::vector<glm::vec2> vertices;
     };
 
     struct ThicknessComponent
@@ -31,11 +53,5 @@ namespace ShapeGame
     struct SegmentComponent
     {
         float length = 100.f;
-    };
-
-    struct TriangleComponent
-    {
-        Vector2 LeftBottom;
-        Vector2 RightBottom;
     };
 } // namespace ShapeGame
