@@ -20,11 +20,11 @@ namespace ShapeGame
     inline glm::vec2 V2_Rotate(const glm::vec2& vec, float degrees)
     {
         float radians = glm::radians(degrees);
-        float cv = cos(radians);
-        float sv = cos(radians);
+        float cv = cosf(radians);
+        float sv = sinf(radians);
         glm::mat2 mat_rot(
-            cv, sv,
-            -sv, cv
+            cv, -sv,
+            sv, cv
         );
         return mat_rot * vec;
     }

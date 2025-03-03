@@ -39,8 +39,8 @@ int main(int argc, char** argv)
     sc.color = glm::u8vec4{255, 0, 0, 255};
     ShapeGame::Transform& tf = GameContext::Get().AddComponent<ShapeGame::Transform>(seg);
     tf.position = glm::vec2{100.f, 100.f};
-    tf.rotation = 30.f;
-    Thickness& tc = GameContext::Get().AddComponent<Thickness>(seg, 30.f); 
+    tf.rotation = 0.f;
+    Thickness& tc = GameContext::Get().AddComponent<Thickness>(seg, 10.f); 
 
     while (!WindowShouldClose())
     {
