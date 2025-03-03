@@ -20,6 +20,7 @@ namespace ShapeGame
 
     void RenderSystem::Update(float DeltaTime)
     {
+        // 注意坐标轴，x轴向右，y轴向下
         BeginMode2D(camera);
 
         DrawLine(-1000.f, 0, 1000.f, 0, BLUE);
