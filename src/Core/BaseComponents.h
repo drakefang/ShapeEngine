@@ -19,9 +19,9 @@ namespace ShapeGame
 
     enum class RenderGroup : uint8_t
     {
-        BackGround = 0,
+        Background = 0,
         Default = 100,
-        UI = 200
+        Top = 200
     };
 
     struct BaseGeometry

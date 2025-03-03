@@ -33,4 +33,6 @@ namespace ShapeGame
     {
         return Color{vec.r, vec.g, vec.b, vec.a};
     }
+
+    float AngleLerp(float Current, float Target, float Speed, float DeltaTime);
 }
