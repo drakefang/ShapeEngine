@@ -3,6 +3,7 @@
 #include "Core/BaseComponents.h"
 #include "Core/GameContext.h"
 #include "Core/Renderer/LineRenderer.h"
+#include "Core/Renderer/PolygonRenderer.h"
 #include "Core/ShapeComponents.h"
 #include <memory>
 
@@ -16,6 +17,7 @@ namespace ShapeGame
         camera.zoom = 1.f;
 
         strategies.emplace(typeid(LineSegment), std::make_unique<LineRenderer>());
+        strategies.emplace(typeid(Polygon), std::make_unique<PolygonRenderer>());
     }
 
     void RenderSystem::Update(float DeltaTime)

@@ -66,17 +66,12 @@ namespace ShapeGame
     void LineRenderer::Execute()
     {
         auto& registry = GameContext::Get().Registry();
-        auto view = registry.view<Transform, LineSegment>();
+        auto view = registry.view<Transform, LineSegment, Visible>();
         view.each(
-            [this](const auto& entity, const Transform& trans, const LineSegment& line)
+            [this](const auto& entity, const Transform& trans, const LineSegment& line, const Visible& visible)
             {
-                bool visible = true;
                 auto& registry = GameContext::Get().Registry();
-                if (registry.any_of<Visible>(entity))
-                {
-                    visible = registry.get<Visible>(entity).value;
-                }
-                if (!visible)
+                if (!visible.value)
                 {
                     return;
                 }
