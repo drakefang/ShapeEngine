@@ -1,4 +1,4 @@
-
+﻿
 #include "RenderSystem.h"
 #include "Core/BaseComponents.h"
 #include "Core/GameContext.h"

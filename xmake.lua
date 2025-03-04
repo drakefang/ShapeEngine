@@ -8,7 +8,8 @@ set_languages("c++20")
 local requires = {
     "raylib 5.5",
     "entt v3.14.0",
-    "glm 1.0.1"
+    "glm 1.0.1",
+    "imgui v1.91.6"
 }
 add_requires(requires)
 
@@ -17,6 +18,7 @@ target(project_name)
     add_packages("raylib")
     add_packages("entt")
     add_packages("glm")
+    add_packages("imgui")
 
     add_includedirs("src")
 
