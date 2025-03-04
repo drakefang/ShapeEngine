@@ -12,7 +12,7 @@ namespace ShapeGame
     {
         camera.target = {0.f, 0.f};
         camera.offset = {GetRenderWidth() * 0.5f, GetRenderHeight() * 0.5f};
-        camera.rotation = 180.f;
+        camera.rotation = 0.f;
         camera.zoom = 1.f;
 
         strategies.emplace(typeid(LineSegment), std::make_unique<LineRenderer>());

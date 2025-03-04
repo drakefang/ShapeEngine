@@ -3,6 +3,8 @@
 
 #include "Core/BaseComponents.h"
 #include "glm/ext/vector_float2.hpp"
+#include <cstdint>
+#include <vector>
 
 namespace ShapeGame
 {
@@ -20,5 +22,16 @@ namespace ShapeGame
     {
         glm::vec2 left;
         glm::vec2 right;
+    };
+
+    struct Rect : BaseGeometry
+    {
+        glm::vec2 size;
+        uint8_t filled:1 = false;
+    };
+
+    struct Polygon : BaseGeometry
+    {
+        std::vector<glm::vec2> vertices;
     };
 }
