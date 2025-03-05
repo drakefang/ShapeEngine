@@ -9,7 +9,7 @@ local requires = {
     "raylib 5.5",
     "entt v3.14.0",
     "glm 1.0.1",
-    "imgui v1.91.6"
+    "raygui 4.0"
 }
 add_requires(requires)
 
@@ -18,7 +18,7 @@ target(project_name)
     add_packages("raylib")
     add_packages("entt")
     add_packages("glm")
-    add_packages("imgui")
+    add_packages("raygui")
 
     add_includedirs("src")
 
