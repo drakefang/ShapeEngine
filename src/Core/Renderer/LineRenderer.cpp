@@ -19,7 +19,7 @@ namespace ShapeGame
         const glm::vec2& loc,
         float rot,
         bool hasThickness,
-        bool hasEndcap)
+        int capSegCount)
     {
         const glm::vec2 local_start = V2_Rotate(segment.left, rot);
         const glm::vec2 local_end = V2_Rotate(segment.right, rot);
@@ -33,34 +33,7 @@ namespace ShapeGame
             return;
         }
 
-        const float halfThick = thickness * 0.5f;
-        const glm::vec2 dir = glm::normalize(end - start);
-        const glm::vec2 perpendicular = {-dir.y * halfThick, dir.x * halfThick};
-
-        // ===== 线段主体（Triangle Strip） =====
-        vertices.push_back(V2_Convert(start - perpendicular)); // 上起点
-        vertices.push_back(V2_Convert(start + perpendicular)); // 下起点
-        vertices.push_back(V2_Convert(end - perpendicular));   // 上终点
-        vertices.push_back(V2_Convert(end + perpendicular));   // 下终点
-
-        if (hasEndcap)
-        { // ===== 端点圆形（Triangle Fan） =====
-            auto addCircle = [&](const glm::vec2& center, float angleOffset)
-            {
-                vertices.push_back(V2_Convert(center)); // 中心点
-                for (int i = 0; i <= CapSegmentCount; ++i)
-                {
-                    float angle = -(angleOffset + (i * PI) / CapSegmentCount) + PI * 0.5f;
-                    glm::vec2 offset = {cosf(angle) * halfThick, sinf(angle) * halfThick};
-                    vertices.push_back(V2_Convert(center + offset));
-                }
-            };
-
-            // 起点圆形（偏移PI/2保证连接方向正确）
-            addCircle(start, atan2f(-perpendicular.x, -perpendicular.y));
-            // 终点圆形（保持与线段方向一致）
-            addCircle(end, atan2f(perpendicular.x, perpendicular.y));
-        }
+        GetSegmentVerticesWithThickness(vertices, start, end, thickness, capSegCount);
     }
 
     void LineRenderer::Execute()
@@ -82,23 +55,23 @@ namespace ShapeGame
                     thickness = registry.get<Thickness>(entity).value;
                 }
                 bool hasEndCap = registry.any_of<RoundedCap>(entity);
-                bool isRounedCap = true;
+                int capSegCount = 0;
                 if (hasEndCap)
                 {
-                    isRounedCap = registry.get<RoundedCap>(entity).value;
+                    capSegCount = registry.get<RoundedCap>(entity).segments;
                 }
                 std::vector<Vector2> vertices;
-                GetVertices(vertices, line, thickness, trans.position, trans.rotation, hasThickness, isRounedCap);
+                GetVertices(vertices, line, thickness, trans.position, trans.rotation, hasThickness, capSegCount);
                 Color c = Color_Convert(line.color);
                 if (hasThickness)
                 {
                     // 绘制线段主体（Triangle Strip）
                     DrawTriangleStrip(vertices.data(), 4, c);
-                    if (isRounedCap)
+                    if (capSegCount > 0)
                     {
                         // 绘制两个端点圆形（Triangle Fan）
-                        DrawTriangleFan(vertices.data() + 4, CapSegmentCount + 2, c);
-                        DrawTriangleFan(vertices.data() + 4 + CapSegmentCount + 2, CapSegmentCount + 2, c);
+                        DrawTriangleFan(vertices.data() + 4, capSegCount + 2, c);
+                        DrawTriangleFan(vertices.data() + 4 + capSegCount + 2, capSegCount + 2, c);
                     }
                 }
                 else

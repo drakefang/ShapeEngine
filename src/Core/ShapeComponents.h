@@ -15,7 +15,7 @@ namespace ShapeGame
 
     struct RoundedCap
     {
-        uint8_t value:1 = true;
+        int segments = 16;
     };
 
     struct Filled

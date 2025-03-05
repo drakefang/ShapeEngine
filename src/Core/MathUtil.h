@@ -9,6 +9,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/ext/vector_float2.hpp"
 #include "raylib.h"
+#include <vector>
 
 namespace ShapeGame
 {
@@ -29,10 +30,23 @@ namespace ShapeGame
         return mat_rot * vec;
     }
 
+    inline void V2_Copy(std::vector<Vector2>& target, const std::vector<glm::vec2>& src)
+    {
+        target.resize(src.size());
+        std::memcpy(target.data(), src.data(), src.size() * sizeof(glm::vec2));
+    }
+
     inline Color Color_Convert(const glm::u8vec4& vec)
     {
         return Color{vec.r, vec.g, vec.b, vec.a};
     }
 
     float AngleLerp(float Current, float Target, float Speed, float DeltaTime);
+
+    size_t GetSegmentVerticesWithThickness(
+        std::vector<Vector2>& vertices,
+        const glm::vec2& start,
+        const glm::vec2& end,
+        float thickness,
+        int capSegCount = 16);
 }
