@@ -2,12 +2,15 @@
 #include "Core/BaseComponents.h"
 #include "Core/GameContext.h"
 #include "Core/ShapeComponents.h"
+#include "Core/Timer.h"
+#include "Core/TimerSystem.h"
 #include "entt/entt.hpp"
 #include "glm/ext/vector_float2.hpp"
 #include "glm/ext/vector_uint4_sized.hpp"
 #include "raylib.h"
 
 #include "Core/Renderer/RenderSystem.h"
+#include <iostream>
 
 using namespace ShapeGame;
 
@@ -28,7 +31,7 @@ int main(int argc, char** argv)
     tf.position = glm::vec2{100.f, 100.f};
     tf.rotation = 0.f;
     tf.scale = glm::vec2{2.f, 2.f};
-    Thickness& tc = GameContext::Get().AddComponent<Thickness>(seg, 10.f); 
+    Thickness& tc = GameContext::Get().AddComponent<Thickness>(seg, 10.f);
     GameContext::Get().AddComponent<Visible>(seg, true);
     GameContext::Get().AddComponent<RoundedCap>(seg, 16);
 
@@ -48,14 +51,23 @@ int main(int argc, char** argv)
     ttf.rotation = 0.f;
     ttf.scale = glm::vec2{2.5f, 2.5f};
     GameContext::Get().AddComponent<RoundedCap>(triangle, 16);
+    Timer& timer = GameContext::Get().AddComponent<Timer>(triangle, 1.f, 0.f, true, false);
+    TimerSystem::BindCallback(timer, []() { std::cout << "timer without params!!!" << std::endl; });
+    // entt 不允许给同一个entity添加相同类型component
+    Timer& timer1 = GameContext::Get().AddComponent<Timer>(seg, 0.3f, 0.f, false, false);
+    int tp = 5;
+    TimerSystem::BindCallback(
+        timer1,
+        [tp](int p, const char* txt) { std::cout << "timer with param:" << tp + p << txt << std::endl; },
+        4,
+        "hello!!!");
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-
-        //ttf.rotation += 30.f * GetFrameTime();
+        // ttf.rotation += 30.f * GetFrameTime();
         tf.rotation += 30.f * GetFrameTime();
 
         GameContext::Get().Update(GetFrameTime());

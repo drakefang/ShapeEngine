@@ -1,6 +1,7 @@
 
 #include "GameContext.h"
 #include "Core/Renderer/RenderSystem.h"
+#include "Core/TimerSystem.h"
 
 namespace ShapeGame
 {
@@ -13,6 +14,7 @@ namespace ShapeGame
     void GameContext::Initialize() 
     {
         RegisterSystem<RenderSystem>();
+        RegisterSystem<TimerSystem>();
     }
 
     void GameContext::Update(float DeltaTime)

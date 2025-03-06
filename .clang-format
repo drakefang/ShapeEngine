@@ -42,3 +42,8 @@ SortIncludes: false                # 禁用自动排序
 ForEachMacros:                     # 处理UE的TArray迭代宏
   - ENUMERATE_RANGE
   - FOREACH_OBJECT
+
+# 强制模板声明独立成行
+AlwaysBreakTemplateDeclarations: Yes
+# 可选增强控制
+#AllowAllTemplateArgumentsOnNextLine: false  # 禁止模板参数挤到下一行
