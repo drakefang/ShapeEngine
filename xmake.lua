@@ -30,4 +30,6 @@ local test_proj_name = "test_raylib"
 target(test_proj_name)
     set_kind("binary")
     add_packages("raylib")
+    add_packages("raygui")
+    add_defines("RAYGUI_IMPLEMENTATION")
     add_files("src/test.cpp")

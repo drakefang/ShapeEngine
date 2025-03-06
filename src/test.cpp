@@ -1,4 +1,4 @@
-/*******************************************************************************************
+﻿/*******************************************************************************************
 *
 *   raylib [core] example - 2D Camera system
 *
@@ -14,6 +14,7 @@
 ********************************************************************************************/
 
 #include "raylib.h"
+#include "raygui.h"
 
 #define MAX_BUILDINGS   100
 
@@ -58,6 +59,7 @@ int main(void)
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
+    bool showMessageBox = false;
 
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
@@ -129,6 +131,20 @@ int main(void)
             DrawText("- Mouse Wheel to Zoom in-out", 40, 60, 10, DARKGRAY);
             DrawText("- A / S to Rotate", 40, 80, 10, DARKGRAY);
             DrawText("- R to reset Zoom and Rotation", 40, 100, 10, DARKGRAY);
+
+            if (GuiButton(Rectangle{24, 24, 120, 30}, "#191#show message"))
+            {
+                showMessageBox = true;
+            }
+            if (showMessageBox)
+            {
+                int result = GuiMessageBox(Rectangle{85, 70, 250, 100}, "#191#Msg Box", 
+                    "Hello world!!", "Nice; Cool");
+                if (result >= 0)
+                {
+                    showMessageBox = false;
+                }
+            }
 
         EndDrawing();
         //----------------------------------------------------------------------------------
