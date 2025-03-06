@@ -16,6 +16,7 @@ namespace ShapeGame
         const Polygon& poly,
         float thickness,
         const glm::vec2& loc,
+        const glm::vec2& scale,
         float rot,
         bool filled,
         bool hasThickness,
@@ -25,9 +26,9 @@ namespace ShapeGame
         std::for_each(
             tmp.begin(),
             tmp.end(),
-            [loc, rot](auto& v)
+            [loc, rot, scale](auto& v)
             {
-                v = V2_Rotate(v, rot);
+                v = V2_Rotate(v, rot) * scale;
                 v += loc;
             });
 
@@ -100,6 +101,7 @@ namespace ShapeGame
                     poly,
                     thickness,
                     transform.position,
+                    transform.scale,
                     transform.rotation,
                     filled,
                     hasThickness,

@@ -27,6 +27,7 @@ int main(int argc, char** argv)
     ShapeGame::Transform& tf = GameContext::Get().AddComponent<ShapeGame::Transform>(seg);
     tf.position = glm::vec2{100.f, 100.f};
     tf.rotation = 0.f;
+    tf.scale = glm::vec2{2.f, 2.f};
     Thickness& tc = GameContext::Get().AddComponent<Thickness>(seg, 10.f); 
     GameContext::Get().AddComponent<Visible>(seg, true);
     GameContext::Get().AddComponent<RoundedCap>(seg, 16);
@@ -44,7 +45,8 @@ int main(int argc, char** argv)
     p.color = glm::u8vec4{0, 255, 0, 255};
     ShapeGame::Transform& ttf = GameContext::Get().AddComponent<ShapeGame::Transform>(triangle);
     ttf.position = glm::vec2{-100.f, 100.f};
-    ttf.rotation = -30.f;
+    ttf.rotation = 0.f;
+    ttf.scale = glm::vec2{2.5f, 2.5f};
     GameContext::Get().AddComponent<RoundedCap>(triangle, 16);
 
     while (!WindowShouldClose())
@@ -54,6 +56,7 @@ int main(int argc, char** argv)
 
 
         //ttf.rotation += 30.f * GetFrameTime();
+        tf.rotation += 30.f * GetFrameTime();
 
         GameContext::Get().Update(GetFrameTime());
         EndDrawing();

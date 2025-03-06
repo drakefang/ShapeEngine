@@ -17,12 +17,13 @@ namespace ShapeGame
         const LineSegment& segment,
         float thickness,
         const glm::vec2& loc,
+        const glm::vec2& scale,
         float rot,
         bool hasThickness,
         int capSegCount)
     {
-        const glm::vec2 local_start = V2_Rotate(segment.left, rot);
-        const glm::vec2 local_end = V2_Rotate(segment.right, rot);
+        const glm::vec2 local_start = V2_Rotate(segment.left, rot) * scale;
+        const glm::vec2 local_end = V2_Rotate(segment.right, rot) * scale;
         const glm::vec2 start = loc + local_start;
         const glm::vec2 end = loc + local_end;
 
@@ -61,7 +62,7 @@ namespace ShapeGame
                     capSegCount = registry.get<RoundedCap>(entity).segments;
                 }
                 std::vector<Vector2> vertices;
-                GetVertices(vertices, line, thickness, trans.position, trans.rotation, hasThickness, capSegCount);
+                GetVertices(vertices, line, thickness, trans.position, trans.scale, trans.rotation, hasThickness, capSegCount);
                 Color c = Color_Convert(line.color);
                 if (hasThickness)
                 {
