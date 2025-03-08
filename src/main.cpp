@@ -1,7 +1,7 @@
 ﻿
 #include "BaseComponents.h"
 #include "GameContext.h"
-#include "ShapeComponents.h"
+#include "Renderer/ShapeComponents.h"
 #include "Timer/Timer.h"
 #include "Timer/TimerSystem.h"
 #include "entt/entt.hpp"
