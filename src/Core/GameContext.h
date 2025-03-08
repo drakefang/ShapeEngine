@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Core/SystemBase.h"
+#include "SystemBase.h"
 #include "entt/entity/registry.hpp"
 #include "entt/entity/fwd.hpp"
 #include <memory>

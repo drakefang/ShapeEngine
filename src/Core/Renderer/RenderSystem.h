@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "Core/BaseComponents.h"
-#include "Core/SystemBase.h"
+#include "BaseComponents.h"
+#include "SystemBase.h"
 #include "raylib.h"
 #include <memory>
 #include <typeindex>

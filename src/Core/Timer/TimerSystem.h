@@ -3,8 +3,8 @@
 
 #include <functional>
 #include <unordered_map>
-#include "Core/SystemBase.h"
-#include "Core/Timer.h"
+#include "SystemBase.h"
+#include "Timer.h"
 
 namespace ShapeGame
 {

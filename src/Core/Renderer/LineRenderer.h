@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Core/BaseComponents.h"
-#include "Core/Renderer/RenderSystem.h"
+#include "BaseComponents.h"
+#include "Renderer/RenderSystem.h"
 
 namespace ShapeGame
 {

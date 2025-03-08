@@ -1,10 +1,10 @@
 ﻿
 #include "RenderSystem.h"
-#include "Core/BaseComponents.h"
-#include "Core/GameContext.h"
-#include "Core/Renderer/LineRenderer.h"
-#include "Core/Renderer/PolygonRenderer.h"
-#include "Core/ShapeComponents.h"
+#include "BaseComponents.h"
+#include "GameContext.h"
+#include "Renderer/LineRenderer.h"
+#include "Renderer/PolygonRenderer.h"
+#include "ShapeComponents.h"
 #include <memory>
 
 namespace ShapeGame

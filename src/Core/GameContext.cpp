@@ -1,7 +1,7 @@
 
 #include "GameContext.h"
-#include "Core/Renderer/RenderSystem.h"
-#include "Core/TimerSystem.h"
+#include "Renderer/RenderSystem.h"
+#include "Timer/TimerSystem.h"
 
 namespace ShapeGame
 {

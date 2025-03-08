@@ -1,9 +1,9 @@
 ﻿
 #include "LineRenderer.h"
-#include "Core/BaseComponents.h"
-#include "Core/GameContext.h"
-#include "Core/MathUtil.h"
-#include "Core/ShapeComponents.h"
+#include "BaseComponents.h"
+#include "GameContext.h"
+#include "MathUtil.h"
+#include "ShapeComponents.h"
 #include "glm/ext/vector_float2.hpp"
 #include "glm/geometric.hpp"
 #include "raylib.h"

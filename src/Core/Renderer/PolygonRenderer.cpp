@@ -1,9 +1,9 @@
 ﻿
 #include "PolygonRenderer.h"
-#include "Core/BaseComponents.h"
-#include "Core/GameContext.h"
-#include "Core/ShapeComponents.h"
-#include "Core/MathUtil.h"
+#include "BaseComponents.h"
+#include "GameContext.h"
+#include "ShapeComponents.h"
+#include "MathUtil.h"
 #include "raylib.h"
 #include <algorithm>
 #include <cstring>

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Core/ShapeComponents.h"
+#include "ShapeComponents.h"
 #include "RenderSystem.h"
 
 namespace ShapeGame

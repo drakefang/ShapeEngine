@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Core/BaseComponents.h"
+#include "BaseComponents.h"
 #include "glm/ext/vector_float2.hpp"
 #include <cstdint>
 #include <vector>

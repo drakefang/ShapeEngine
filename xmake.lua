@@ -21,6 +21,7 @@ target(project_name)
     add_packages("raygui")
 
     add_includedirs("src")
+    add_includedirs("src/Core")
 
     add_headerfiles("src/**/*.h")
     add_files("src/main.cpp")

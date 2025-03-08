@@ -1,15 +1,15 @@
 ﻿
-#include "Core/BaseComponents.h"
-#include "Core/GameContext.h"
-#include "Core/ShapeComponents.h"
-#include "Core/Timer.h"
-#include "Core/TimerSystem.h"
+#include "BaseComponents.h"
+#include "GameContext.h"
+#include "ShapeComponents.h"
+#include "Timer/Timer.h"
+#include "Timer/TimerSystem.h"
 #include "entt/entt.hpp"
 #include "glm/ext/vector_float2.hpp"
 #include "glm/ext/vector_uint4_sized.hpp"
 #include "raylib.h"
 
-#include "Core/Renderer/RenderSystem.h"
+#include "Renderer/RenderSystem.h"
 #include <iostream>
 
 using namespace ShapeGame;
