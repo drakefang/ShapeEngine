@@ -7,14 +7,17 @@
 
 namespace ShapeGame
 {
-    class Archive;
+    class WriterArchive;
+    class ReaderArchive;
 
     class Object
     {
     public:
+        Object() = default;
         virtual ~Object() = default;
 
-        void Serialize(Archive& archive);
+        virtual void Save(WriterArchive& writer) const;
+        virtual void Load(ReaderArchive& reader);
 
         entt::id_type GetTypeId() const;
 
