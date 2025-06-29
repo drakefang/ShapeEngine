@@ -112,7 +112,7 @@ namespace ShapeGame
         newComponent->owner = this;
         Components.push_back(newComponent);
 
-        if (OwningWorld)
+        if (!OwningWorld.expired())
         {
             newComponent->Initialize();
         }
