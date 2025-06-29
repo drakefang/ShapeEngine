@@ -103,7 +103,7 @@ namespace ShapeGame
     void Object::RegisterMeta()
     {
         using namespace entt::literals;
-        entt::meta<Object>()
+        entt::meta_factory<Object>()
             .type("Object"_hs)
             .ctor<>()
             .data<&Object::ObjectId, entt::as_ref_t>("ObjectId"_hs)
