@@ -4,23 +4,30 @@ set(EngineName "ShapeEngine")
 add_library(${EngineName} SHARED)
 
 set(CoreSrc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Archive.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/BinaryArchive.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/BinaryArchive.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Logger.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Logger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Object.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Object.cpp
+    Core/Archive.h
+    Core/BinaryArchive.h
+    Core/BinaryArchive.cpp
+    Core/Logger.h
+    Core/Logger.cpp
+    Core/Object.h
+    Core/Object.cpp
 )
 
 set(AppSrc
-    ${CMAKE_CURRENT_SOURCE_DIR}/App/Application.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/App/Application.cpp
+    App/Application.h
+    App/Application.cpp
+)
+
+set(ModuleSrc
+    Module/IModuleInterface.h
+    Module/ModuleManager.cpp
+    Module/ModuleManager.h
 )
 
 target_sources(${EngineName} PRIVATE
     ${CoreSrc}
     ${AppSrc}
+    ${ModuleSrc}
 )
 
 target_include_directories(${EngineName} PUBLIC
