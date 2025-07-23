@@ -43,4 +43,5 @@ target_link_libraries(${EngineName} PRIVATE
     bgfx::bgfx
     bgfx::bimg
     bgfx::bimg_decode
+    tomlplusplus::tomlplusplus
 )
