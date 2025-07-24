@@ -29,7 +29,7 @@ namespace ShapeEngine
 
         void RegisterModule(const std::string &moduleName, const ModuleFactory &factory);
 
-        IModuleInterface& LoadModule(const std::string& moduleName);
+        std::shared_ptr<IModuleInterface> LoadModule(const std::string& moduleName);
 
         [[nodiscard]] bool IsModuleLoaded(const std::string& moduleName) const;
 
@@ -52,21 +52,21 @@ namespace ShapeEngine
             std::vector<std::string> Dependencies;
         };
 
-        std::map<std::string, ModuleInfo> m_RegisteredModules;
-        std::map<std::string, std::shared_ptr<IModule>> m_LoadedModules;
-        std::vector<std::string> m_StartupOrder;
+        std::map<std::string, ModuleInfo> RegisteredModules;
+        std::map<std::string, std::shared_ptr<IModule>> LoadedModules;
+        std::vector<std::string> StartupOrder;
     };
 
     template<typename T>
-    T& LoadModuleChecked(const std::string& moduleName)
+    std::shared_ptr<T> LoadModuleChecked(const std::string& moduleName)
     {
         static_assert(std::is_base_of_v<IModuleInterface, T>, "T must be a module interface.");
-        IModuleInterface& module = ModuleManager::Get().LoadModule(moduleName);
-        T* result = dynamic_cast<T*>(&module);
+        const auto module = ModuleManager::Get().LoadModule(moduleName);
+        auto result = std::dynamic_pointer_cast<T>(module);
         if (!result)
         {
             throw std::runtime_error("Failed to cast module '" + moduleName + "' to the requested interface type.");
         }
-        return *result;
+        return result;
     }
 }

@@ -42,7 +42,9 @@ target_include_directories(${EngineName} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_definitions(${EngineName} PRIVATE SE_BUILD_DLL)
+target_compile_definitions(${EngineName} PRIVATE
+    SE_BUILD_DLL
+)
 target_link_libraries(${EngineName} PRIVATE
     EnTT::EnTT
     glm::glm

@@ -18,7 +18,7 @@ namespace ShapeEngine
 
     void ModuleManager::RegisterModule(const std::string& moduleName, const ModuleFactory& factory)
     {
-        if (m_RegisteredModules.contains(moduleName))
+        if (RegisteredModules.contains(moduleName))
         {
             Logger()->warn("Module '{}' is already registered. Overwriting.", moduleName);
         }
@@ -36,20 +36,20 @@ namespace ShapeEngine
             return;
         }
 
-        m_RegisteredModules[moduleName] = {factory, tempInstance->GetDependencies()};
+        RegisteredModules[moduleName] = {factory, tempInstance->GetDependencies()};
         Logger()->info("Module factory registered: {}", moduleName);
     }
 
-    IModuleInterface& ModuleManager::LoadModule(const std::string& moduleName)
+    std::shared_ptr<IModuleInterface> ModuleManager::LoadModule(const std::string& moduleName)
     {
         if (IsModuleLoaded(moduleName))
         {
-            auto* interface = dynamic_cast<IModuleInterface*>(m_LoadedModules.at(moduleName).get());
+            auto interface = std::dynamic_pointer_cast<IModuleInterface>(LoadedModules.at(moduleName));
             if (!interface)
             {
                 throw std::runtime_error("Module '" + moduleName + "' was loaded but is not an interface module.");
             }
-            return *interface;
+            return interface;
         }
 
         std::vector<std::string> loadOrder;
@@ -61,45 +61,45 @@ namespace ShapeEngine
             if (!IsModuleLoaded(name))
             {
                 Logger()->info("Loading module: {}", name);
-                const auto& [Factory, Dependencies] = m_RegisteredModules.at(name);
+                const auto& [Factory, Dependencies] = RegisteredModules.at(name);
                 std::shared_ptr<IModule> moduleInstance(Factory());
 
-                m_LoadedModules[name] = std::move(moduleInstance);
-                m_StartupOrder.push_back(name);
+                LoadedModules[name] = std::move(moduleInstance);
+                StartupOrder.push_back(name);
 
-                m_LoadedModules.at(name)->Startup();
+                LoadedModules.at(name)->Startup();
             }
         }
 
-        auto* interface = dynamic_cast<IModuleInterface*>(m_LoadedModules.at(moduleName).get());
+        auto interface = std::dynamic_pointer_cast<IModuleInterface>(LoadedModules.at(moduleName));
         if (!interface)
         {
             throw std::runtime_error("Module '" + moduleName + "' was loaded but is not an interface module.");
         }
-        return *interface;
+        return interface;
     }
 
     bool ModuleManager::IsModuleLoaded(const std::string& moduleName) const
     {
-        return m_LoadedModules.contains(moduleName);
+        return LoadedModules.contains(moduleName);
     }
 
     void ModuleManager::ShutdownAllModules()
     {
         Logger()->info("Shutting down all modules...");
 
-        std::reverse(m_StartupOrder.begin(), m_StartupOrder.end());
-        for (const auto& moduleName : m_StartupOrder)
+        std::reverse(StartupOrder.begin(), StartupOrder.end());
+        for (const auto& moduleName : StartupOrder)
         {
-            if (m_LoadedModules.contains(moduleName))
+            if (LoadedModules.contains(moduleName))
             {
                 Logger()->info("Shutting down module: {}", moduleName);
-                m_LoadedModules.at(moduleName)->Shutdown();
+                LoadedModules.at(moduleName)->Shutdown();
             }
         }
 
-        m_LoadedModules.clear();
-        m_StartupOrder.clear();
+        LoadedModules.clear();
+        StartupOrder.clear();
     }
 
     void ModuleManager::TopologicalSort(
@@ -109,12 +109,12 @@ namespace ShapeEngine
     {
         visitState[moduleName] = EVisitState::Visiting;
 
-        if (!m_RegisteredModules.contains(moduleName))
+        if (!RegisteredModules.contains(moduleName))
         {
             throw std::runtime_error("Dependency module not found: " + moduleName);
         }
 
-        for (const auto& dependencies = m_RegisteredModules.at(moduleName).Dependencies;
+        for (const auto& dependencies = RegisteredModules.at(moduleName).Dependencies;
             const auto& depName : dependencies)
         {
             if (visitState[depName] == EVisitState::Unvisited)

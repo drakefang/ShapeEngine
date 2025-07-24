@@ -6,7 +6,7 @@
 #include "ConfigManager.h"
 #include "Core/Logger.h"
 
-#include <toml++/toml.hpp>
+#include <toml++/toml.h>
 #include <algorithm>
 #include <sstream>
 

@@ -23,13 +23,13 @@ namespace ShapeEngine
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;
 
-        void Initialize();
+        void Initialize(const std::filesystem::path& projectFilePath);
         void Run();
         void Shutdown();
 
     private:
         void Tick();
-        void LoadPlugins();
+        void LoadPlugins(const std::filesystem::path& projectRoot);
         void UnloadPlugins();
 
     private:
