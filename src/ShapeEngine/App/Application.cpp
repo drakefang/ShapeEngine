@@ -8,9 +8,28 @@
 
 namespace ShapeEngine
 {
+    Application::Application()
+    {
+        SetupLogger();
+    }
+
+    Application::~Application()
+    {
+        ShutdownLogger();
+
+        if (bIsRunning)
+        {
+            Shutdown();
+        }
+    }
+
     void Application::Initialize()
     {
-        ShapeEngine::SetupLogger();
+        Logger()->info("==================================================");
+        Logger()->info("Application Initializing...");
+        Logger()->info("==================================================");
+
+        LoadPlugins();
     }
 
     void Application::Run()
@@ -31,5 +50,13 @@ namespace ShapeEngine
     {
         float deltaTime = 0.f;
 
+    }
+
+    void Application::LoadPlugins()
+    {
+    }
+
+    void Application::UnloadPlugins()
+    {
     }
 }

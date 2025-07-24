@@ -7,7 +7,7 @@
 
 namespace ShapeEngine
 {
-    void SE_API SetupLogger();
-    SE_API std::shared_ptr<spdlog::logger> Logger();
-    void SE_API ShutdownLogger();
+    void SHAPE_ENGINE_API SetupLogger();
+    SHAPE_ENGINE_API std::shared_ptr<spdlog::logger> Logger();
+    void SHAPE_ENGINE_API ShutdownLogger();
 }

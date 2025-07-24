@@ -5,17 +5,25 @@ add_library(${EngineName} SHARED)
 
 set(CoreSrc
     Core/Archive.h
+    Core/Archive.cpp
     Core/BinaryArchive.h
     Core/BinaryArchive.cpp
     Core/Logger.h
     Core/Logger.cpp
     Core/Object.h
     Core/Object.cpp
+    Core/PlatformDefine.h
 )
 
 set(AppSrc
     App/Application.h
     App/Application.cpp
+    App/ConfigManager.h
+    App/ConfigManager.cpp
+    App/DynamicLibrary.h
+    App/DynamicLibrary.cpp
+    App/IPlugin.h
+    App/IPrimaryGameModule.h
 )
 
 set(ModuleSrc

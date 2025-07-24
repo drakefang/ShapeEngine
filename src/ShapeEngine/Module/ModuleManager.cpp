@@ -29,7 +29,7 @@ namespace ShapeEngine
             return;
         }
 
-        const std::unique_ptr<IModule> tempInstance(factory());
+        const std::shared_ptr<IModule> tempInstance(factory());
         if (!tempInstance)
         {
             Logger()->error("Module factory for '{}' returned a nullptr.", moduleName);
@@ -62,7 +62,7 @@ namespace ShapeEngine
             {
                 Logger()->info("Loading module: {}", name);
                 const auto& [Factory, Dependencies] = m_RegisteredModules.at(name);
-                std::unique_ptr<IModule> moduleInstance(Factory());
+                std::shared_ptr<IModule> moduleInstance(Factory());
 
                 m_LoadedModules[name] = std::move(moduleInstance);
                 m_StartupOrder.push_back(name);

@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <entt/entt.hpp>
 
+#include "Core/PlatformDefine.h"
+
 namespace ShapeEngine
 {
     class WriterArchive;
@@ -24,7 +26,7 @@ namespace ShapeEngine
         std::atomic<uint64_t> nextId{1};
     };
 
-    class Object
+    class SHAPE_ENGINE_API Object
     {
     public:
         Object() = default;
@@ -33,7 +35,7 @@ namespace ShapeEngine
         virtual void Save(WriterArchive& writer) const;
         virtual void Load(ReaderArchive& reader);
 
-        entt::id_type GetTypeId() const;
+        [[nodiscard]] entt::id_type GetTypeId() const;
 
         static void RegisterMeta();
 

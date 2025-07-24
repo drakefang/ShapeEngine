@@ -9,7 +9,7 @@
 
 namespace ShapeEngine
 {
-    class SE_API WriteArchive_Binary : public WriterArchive
+    class SHAPE_ENGINE_API WriteArchive_Binary : public WriterArchive
     {
     public:
         WriteArchive_Binary(const std::string& filePath);
@@ -38,7 +38,7 @@ namespace ShapeEngine
         if (IsValid()) FileStream.write(reinterpret_cast<const char*>(&value), sizeof(T));
     }
 
-    class SE_API ReadArchive_Binary : public ReaderArchive
+    class SHAPE_ENGINE_API ReadArchive_Binary : public ReaderArchive
     {
     public:
         ReadArchive_Binary(const std::string& filePath);

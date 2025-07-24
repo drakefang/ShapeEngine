@@ -17,9 +17,9 @@ namespace ShapeEngine
 {
     class IModule;
     class IModuleInterface;
-    using ModuleFactory = std::function<std::unique_ptr<IModule>()>;
+    using ModuleFactory = std::function<std::shared_ptr<IModule>()>;
 
-    class SE_API ModuleManager
+    class SHAPE_ENGINE_API ModuleManager
     {
     public:
         static ModuleManager& Get();
@@ -31,7 +31,7 @@ namespace ShapeEngine
 
         IModuleInterface& LoadModule(const std::string& moduleName);
 
-        bool IsModuleLoaded(const std::string& moduleName) const;
+        [[nodiscard]] bool IsModuleLoaded(const std::string& moduleName) const;
 
         void ShutdownAllModules();
 
@@ -53,7 +53,7 @@ namespace ShapeEngine
         };
 
         std::map<std::string, ModuleInfo> m_RegisteredModules;
-        std::map<std::string, std::unique_ptr<IModule>> m_LoadedModules;
+        std::map<std::string, std::shared_ptr<IModule>> m_LoadedModules;
         std::vector<std::string> m_StartupOrder;
     };
 

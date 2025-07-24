@@ -4,15 +4,24 @@
 
 #pragma once
 #include <memory>
-#include "Core/PlatformDefine.h"
+#include <vector>
 
+#include "DynamicLibrary.h"
+#include "IPlugin.h"
+#include "Core/PlatformDefine.h"
 
 namespace ShapeEngine
 {
-    class SE_API Application
+    class IPrimaryGameModule;
+
+    class SHAPE_ENGINE_API Application
     {
     public:
-        Application() = default;
+        Application();
+        ~Application();
+
+        Application(const Application&) = delete;
+        Application& operator=(const Application&) = delete;
 
         void Initialize();
         void Run();
@@ -20,8 +29,15 @@ namespace ShapeEngine
 
     private:
         void Tick();
+        void LoadPlugins();
+        void UnloadPlugins();
 
     private:
         bool bIsRunning = true;
+
+        std::shared_ptr<IPrimaryGameModule> PrimaryGameModule = nullptr;
+
+        std::vector<std::unique_ptr<IPlugin>> Plugins;
+        std::vector<DynamicLibrary> LoadedLibraries;
     };
 }
