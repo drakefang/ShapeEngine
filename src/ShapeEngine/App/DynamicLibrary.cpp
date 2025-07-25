@@ -23,8 +23,8 @@ namespace ShapeEngine
             Logger()->error("Failed to load DLL: {}. Win32 Error Code: {}", path.string(), GetLastError());
         }
 #else
-        m_Handle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-        if (!m_Handle)
+        Handle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+        if (!Handle)
         {
             Logger()->error("Failed to load shared library: {}. Error: {}", path.string(), dlerror());
         }
@@ -38,7 +38,7 @@ namespace ShapeEngine
 #if defined(_WIN32)
             FreeLibrary(static_cast<HMODULE>(Handle));
 #else
-            dlclose(m_Handle);
+            dlclose(Handle);
 #endif
         }
     }
@@ -58,7 +58,7 @@ namespace ShapeEngine
 #if defined(_WIN32)
                 FreeLibrary(static_cast<HMODULE>(Handle));
 #else
-                dlclose(m_Handle);
+                dlclose(Handle);
 #endif
             }
             Handle = other.Handle;
@@ -81,7 +81,7 @@ namespace ShapeEngine
 #if defined(_WIN32)
         return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(Handle), symbolName.c_str()));
 #else
-        return dlsym(m_Handle, symbolName.c_str());
+        return dlsym(Handle, symbolName.c_str());
 #endif
     }
 }
