@@ -37,7 +37,7 @@ namespace ShapeEngine
         template<typename T>
         void SetValue(const std::string& key, T value);
 
-        uint64_t RegisterChangeCallback(const std::string& key, OnConfigChangedDelegate delegate) const;
+        [[nodiscard]] uint64_t RegisterChangeCallback(const std::string& key, OnConfigChangedDelegate delegate) const;
         void UnregisterChangeCallback(const std::string& key, uint64_t handle) const;
 
         template<typename T>
@@ -50,7 +50,7 @@ namespace ShapeEngine
         std::unique_ptr<class Impl> pimpl;
 
         void SetValueAny(const std::string& key, const std::any& value) const;
-        std::any GetValueAny(const std::string& key) const;
+        [[nodiscard]] std::any GetValueAny(const std::string& key) const;
     };
 
     template<typename T>

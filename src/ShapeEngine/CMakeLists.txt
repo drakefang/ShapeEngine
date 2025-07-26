@@ -12,7 +12,13 @@ set(CoreSrc
     Core/Logger.cpp
     Core/Object.h
     Core/Object.cpp
+    Core/GameTime.h
+    Core/GameClock.h
+    Core/GameClock.cpp
+    Core/TimerManager.h
+    Core/TimerManager.cpp
     Core/PlatformDefine.h
+    Core/Coroutine/Task.h
 )
 
 set(AppSrc
@@ -32,10 +38,16 @@ set(ModuleSrc
     Module/ModuleManager.h
 )
 
+set(ServiceSrc
+    Service/ServiceLocator.h
+    Service/ServiceLocator.cpp
+)
+
 target_sources(${EngineName} PRIVATE
     ${CoreSrc}
     ${AppSrc}
     ${ModuleSrc}
+    ${ServiceSrc}
 )
 
 target_include_directories(${EngineName} PUBLIC

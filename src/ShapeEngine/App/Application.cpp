@@ -11,6 +11,8 @@
 
 #include <toml++/toml.h>
 
+#include "Service/ServiceLocator.h"
+
 namespace ShapeEngine
 {
     Application::Application()
@@ -34,6 +36,9 @@ namespace ShapeEngine
         Logger()->info("Application Initializing...");
         Logger()->info("==================================================");
 
+        ServiceLocator::Provide(&AppGameClock);
+        ServiceLocator::Provide(&AppTimerManager);
+
         if (std::filesystem::exists(projectFilePath))
         {
             throw std::runtime_error("Project File not found:" + projectFilePath.string());
@@ -50,14 +55,14 @@ namespace ShapeEngine
             throw std::runtime_error(errMsg);
         }
         std::vector<std::filesystem::path> configFilesToLoad;
-        configFilesToLoad.push_back("Config/DefaultEngine.ini");
+        configFilesToLoad.emplace_back("Config/DefaultEngine.ini");
         if (const auto gameConfigNode = projectDesc["GameConfigFiles"].as_array())
         {
             for (const auto& element : *gameConfigNode)
             {
                 if (auto pathStr = element.value<std::string>())
                 {
-                    configFilesToLoad.push_back(*pathStr);
+                    configFilesToLoad.emplace_back(*pathStr);
                 }
             }
         }
@@ -108,11 +113,14 @@ namespace ShapeEngine
 
     void Application::Tick()
     {
-        float deltaTime = 0.f;
+        AppGameClock.Tick();
+        const GameTime& gameTime = AppGameClock.GetCurrentTime();
+
+        AppTimerManager.Tick(gameTime);
 
         if (PrimaryGameModule)
         {
-            PrimaryGameModule->Tick(deltaTime);
+            PrimaryGameModule->Tick(gameTime);
         }
     }
 

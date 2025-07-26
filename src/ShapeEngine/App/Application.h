@@ -8,7 +8,9 @@
 
 #include "DynamicLibrary.h"
 #include "IPlugin.h"
+#include "Core/GameClock.h"
 #include "Core/PlatformDefine.h"
+#include "Core/TimerManager.h"
 
 namespace ShapeEngine
 {
@@ -39,5 +41,8 @@ namespace ShapeEngine
 
         std::vector<std::unique_ptr<IPlugin>> Plugins;
         std::vector<DynamicLibrary> LoadedLibraries;
+
+        GameClock AppGameClock;
+        TimerManager AppTimerManager;
     };
 }

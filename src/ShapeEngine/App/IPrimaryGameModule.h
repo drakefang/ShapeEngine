@@ -18,7 +18,7 @@ namespace ShapeEngine
         {
         }
 
-        virtual void Tick(float DeltaTimes) = 0;
+        virtual void Tick(const GameTime& gameTime) = 0;
 
         [[nodiscard]] virtual std::string GetPrimaryGameModuleName() const = 0;
 
