@@ -5,8 +5,12 @@ project(${ProjName})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(MSVC)
+    add_compile_options("/utf-8")
+endif()
+
 #find_package(bgfx CONFIG REQUIRED)
-#find_package(EnTT CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 #find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tomlplusplus CONFIG REQUIRED)

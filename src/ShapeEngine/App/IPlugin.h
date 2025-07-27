@@ -5,6 +5,8 @@
 #pragma once
 #include <string_view>
 
+#include "Core/PlatformDefine.h"
+
 
 namespace ShapeEngine
 {
@@ -16,4 +18,9 @@ namespace ShapeEngine
         virtual void Shutdown() = 0;
         virtual std::string_view GetName() = 0;
     };
+}
+
+#define IMPLEMENT_PLUGIN(PluginClass) \
+extern "C" { \
+SHAPE_ENGINE_API ShapeEngine::IPlugin* CreatePlugin() { return new PluginClass(); } \
 }

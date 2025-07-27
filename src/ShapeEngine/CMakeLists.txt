@@ -30,6 +30,7 @@ set(AppSrc
     App/DynamicLibrary.cpp
     App/IPlugin.h
     App/IPrimaryGameModule.h
+    App/EngineMain.cpp
 )
 
 set(ModuleSrc
@@ -59,7 +60,7 @@ target_compile_definitions(${EngineName} PRIVATE
 )
 
 target_link_libraries(${EngineName} PRIVATE
-    #EnTT::EnTT
+    EnTT::EnTT
     #glm::glm
     spdlog::spdlog
     #bgfx::bx
