@@ -57,13 +57,14 @@ target_include_directories(${EngineName} PUBLIC
 target_compile_definitions(${EngineName} PRIVATE
     SE_BUILD_DLL
 )
+
 target_link_libraries(${EngineName} PRIVATE
-    EnTT::EnTT
-    glm::glm
+    #EnTT::EnTT
+    #glm::glm
     spdlog::spdlog
-    bgfx::bx
-    bgfx::bgfx
-    bgfx::bimg
-    bgfx::bimg_decode
+    #bgfx::bx
+    #bgfx::bgfx
+    #bgfx::bimg
+    #bgfx::bimg_decode
     tomlplusplus::tomlplusplus
 )

@@ -17,13 +17,10 @@ namespace ShapeEngine
 {
     Application::Application()
     {
-        SetupLogger();
     }
 
     Application::~Application()
     {
-        ShutdownLogger();
-
         if (bIsRunning)
         {
             Shutdown();
@@ -38,6 +35,7 @@ namespace ShapeEngine
 
         ServiceLocator::Provide(&AppGameClock);
         ServiceLocator::Provide(&AppTimerManager);
+        ServiceLocator::Provide(this);
 
         if (std::filesystem::exists(projectFilePath))
         {
