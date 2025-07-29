@@ -70,10 +70,10 @@ extern "C"
 
         try
         {
-            Application app;
-            app.Initialize(projectFilePath);
-            app.Run();
-            app.Shutdown();
+            auto app = Application::Create();
+            app->Initialize(projectFilePath);
+            app->Run();
+            app->Shutdown();
         }
         catch (const std::exception& e)
         {

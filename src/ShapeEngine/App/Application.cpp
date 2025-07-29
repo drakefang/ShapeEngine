@@ -27,15 +27,24 @@ namespace ShapeEngine
         }
     }
 
+    std::shared_ptr<Application> Application::Create()
+    {
+        return std::make_shared<Application>();
+    }
+
     void Application::Initialize(const std::filesystem::path& projectFilePath)
     {
         Logger()->info("==================================================");
         Logger()->info("Application Initializing...");
         Logger()->info("==================================================");
 
-        ServiceLocator::Provide(&AppGameClock);
-        ServiceLocator::Provide(&AppTimerManager);
-        ServiceLocator::Provide(this);
+        std::shared_ptr<GameClock> clockPtr(&AppGameClock, [](GameClock*){});
+        ServiceLocator::Provide(clockPtr);
+
+        std::shared_ptr<TimerManager> timerPtr(&AppTimerManager, [](TimerManager*){});
+        ServiceLocator::Provide(timerPtr);
+
+        ServiceLocator::Provide(shared_from_this());
 
         if (!std::filesystem::exists(projectFilePath))
         {
@@ -106,7 +115,6 @@ namespace ShapeEngine
 
         bIsRunning = false;
         Logger()->info("Application shutdown complete.");
-        //ShapeEngine::ShutdownLogger();
     }
 
     void Application::Tick()

@@ -16,7 +16,7 @@ namespace ShapeEngine
 {
     class IPrimaryGameModule;
 
-    class SHAPE_ENGINE_API Application
+    class SHAPE_ENGINE_API Application : public std::enable_shared_from_this<Application>
     {
     public:
         Application();
@@ -24,6 +24,8 @@ namespace ShapeEngine
 
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;
+
+        static std::shared_ptr<Application> Create();
 
         void Initialize(const std::filesystem::path& projectFilePath);
         void Run();

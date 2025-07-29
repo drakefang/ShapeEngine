@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <typeindex>
 #include <unordered_map>
+#include <memory>
 
 #include "Core/PlatformDefine.h"
 
@@ -17,13 +18,13 @@ namespace ShapeEngine
     {
     public:
         template<typename T>
-        static void Provide(T* service)
+        static void Provide(std::shared_ptr<T> service)
         {
             Services[typeid(T)] = service;
         }
 
         template<typename T>
-        static T& Get()
+        static std::shared_ptr<T> Get()
         {
             const auto it = Services.find(typeid(T));
             if (it == Services.end())
@@ -33,7 +34,7 @@ namespace ShapeEngine
 
             try
             {
-                return *std::any_cast<T*>(it->second);
+                return std::any_cast<std::shared_ptr<T>>(it->second);
             }
             catch (const std::bad_any_cast& e)
             {
