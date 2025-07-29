@@ -20,7 +20,7 @@ namespace ShapeEngine
     };
 }
 
-#define IMPLEMENT_PLUGIN(PluginClass) \
+#define IMPLEMENT_PLUGIN(API_MACRO, PluginClass) \
 extern "C" { \
-SHAPE_ENGINE_API ShapeEngine::IPlugin* CreatePlugin() { return new PluginClass(); } \
+API_MACRO ShapeEngine::IPlugin* CreatePlugin() { return new PluginClass(); } \
 }

@@ -14,6 +14,10 @@ target_sources(${PluginName} PRIVATE
     ${PluginSrc}
 )
 
+target_compile_definitions(${PluginName} PRIVATE
+    SP_BUILD_DLL
+)
+
 target_link_libraries(${PluginName} PRIVATE
     SDL3::SDL3
     spdlog::spdlog

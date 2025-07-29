@@ -37,7 +37,7 @@ namespace ShapeEngine
         ServiceLocator::Provide(&AppTimerManager);
         ServiceLocator::Provide(this);
 
-        if (std::filesystem::exists(projectFilePath))
+        if (!std::filesystem::exists(projectFilePath))
         {
             throw std::runtime_error("Project File not found:" + projectFilePath.string());
         }
@@ -106,7 +106,7 @@ namespace ShapeEngine
 
         bIsRunning = false;
         Logger()->info("Application shutdown complete.");
-        ShapeEngine::ShutdownLogger();
+        //ShapeEngine::ShutdownLogger();
     }
 
     void Application::Tick()

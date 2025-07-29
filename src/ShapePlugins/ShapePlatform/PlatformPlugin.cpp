@@ -4,13 +4,13 @@
 
 #include "PlatformPlugin.h"
 
+#include "PlatformDefine.h"
 #include "PlatformModule.h"
 #include "Module/ModuleManager.h"
 
 
 namespace ShapePlatform
 {
-
     void PlatformPlugin::Startup()
     {
         ShapeEngine::ModuleManager::Get().RegisterModule("PlatformSDL", []() {
@@ -27,3 +27,5 @@ namespace ShapePlatform
         return "ShapePlatform";
     }
 }
+
+IMPLEMENT_PLUGIN(SHAPE_PLATFORM_API, ShapePlatform::PlatformPlugin);
