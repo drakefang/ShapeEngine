@@ -3,7 +3,7 @@
 //
 
 #include "GameClock.h"
-
+#include <algorithm>
 
 namespace ShapeEngine
 {
