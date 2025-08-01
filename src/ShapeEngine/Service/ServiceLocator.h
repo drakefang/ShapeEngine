@@ -9,6 +9,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <memory>
+#include <string>
 
 #include "Core/PlatformDefine.h"
 
@@ -29,7 +30,7 @@ namespace ShapeEngine
             const auto it = Services.find(typeid(T));
             if (it == Services.end())
             {
-                throw std::runtime_error("Service not found: " + std::string(typeid(T).name()));
+                throw std::runtime_error(std::string("Service not found: ") + std::string(typeid(T).name()));
             }
 
             try
@@ -38,7 +39,7 @@ namespace ShapeEngine
             }
             catch (const std::bad_any_cast& e)
             {
-                throw std::runtime_error("Service cast failed: " + std::string(e.what()));
+                throw std::runtime_error(std::string("Service cast failed: ") + std::string(e.what()));
             }
         }
 
