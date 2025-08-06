@@ -11,9 +11,9 @@ if(MSVC)
     add_compile_options("/utf-8")
 endif()
 
-#find_package(bgfx CONFIG REQUIRED)
+find_package(bgfx CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
-#find_package(glm CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tomlplusplus CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)
@@ -57,9 +57,10 @@ function(setup_plugin_deployment PLUGIN_TARGET)
     endif()
 endfunction()
 
-add_subdirectory(src/ShapeEngine)
-add_subdirectory(src/ShapeHost)
-add_subdirectory(src/ShapePlugins)
+#add_subdirectory(src/ShapeEngine)
+#add_subdirectory(src/ShapeHost)
+#add_subdirectory(src/ShapePlugins)
+add_subdirectory(src/ShapeGameDemo)
 
 #[[
 set(CoreSrc
