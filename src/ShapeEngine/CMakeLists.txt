@@ -69,3 +69,16 @@ target_link_libraries(${EngineName} PRIVATE
     #bgfx::bimg_decode
     tomlplusplus::tomlplusplus
 )
+
+set(ENGINE_CONFIG_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/Config/DefaultEngine.toml")
+set(ENGINE_CONFIG_DESTINATION "$<TARGET_FILE_DIR:ShapeHost>/Config/")
+
+add_custom_target(Deploy_DefaultEngineConfig ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${ENGINE_CONFIG_DESTINATION}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${ENGINE_CONFIG_SOURCE}"
+    "${ENGINE_CONFIG_DESTINATION}"
+
+    COMMENT "Deploying DefaultEngine.toml to output directory..."
+)
+add_dependencies(Deploy_DefaultEngineConfig ShapeHost)

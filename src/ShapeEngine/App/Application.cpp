@@ -4,6 +4,8 @@
 
 #include "Application.h"
 
+#include <fstream>
+
 #include "ConfigManager.h"
 #include "IPrimaryGameModule.h"
 #include "Core/Logger.h"
@@ -15,6 +17,65 @@
 
 namespace ShapeEngine
 {
+    void CreateDefaultProjectFile(const std::filesystem::path& projectFilePath)
+    {
+        Logger()->info("Project file not found. Creating a default one at: {}", projectFilePath.string());
+
+        // 从路径中提取项目名称作为默认模块名
+        std::string defaultModuleName = projectFilePath.stem().string();
+
+        std::ofstream projectFile(projectFilePath);
+        if (projectFile.is_open())
+        {
+            projectFile << R"(# ShapeEngine Project Descriptor - Auto-generated
+# This file describes your game project to the engine.
+
+FormatVersion = "1.0"
+
+# [Required] The primary game module to load on startup.
+# This should match the name of your game's main plugin module.
+PrimaryGameModuleName = ")" << defaultModuleName << R"("
+
+# [Recommended] A list of game-specific configuration files to load.
+# These files will override settings from the engine's DefaultEngine.toml.
+GameConfigFiles = [
+    "Config/Game.toml",
+]
+)";
+            projectFile.close();
+        }
+        else
+        {
+            Logger()->error("Failed to create default project file at: {}", projectFilePath.string());
+        }
+    }
+
+    void CreateDefaultGameConfigFile(const std::filesystem::path& configFilePath)
+    {
+        Logger()->info("Game config file not found. Creating a default one at: {}", configFilePath.string());
+
+        // 确保 Config/ 目录存在
+        std::filesystem::create_directories(configFilePath.parent_path());
+
+        std::ofstream configFile(configFilePath);
+        if (configFile.is_open())
+        {
+            configFile << R"(# MyGame - Default Game Configuration
+# This file overrides settings from the engine's DefaultEngine.toml.
+
+[Platform.Window]
+Title = "My Awesome ShapeEngine Game!"
+Width = 1280
+Height = 720
+)";
+            configFile.close();
+        }
+        else
+        {
+            Logger()->error("Failed to create default game config file at: {}", configFilePath.string());
+        }
+    }
+
     Application::Application()
     {
     }
@@ -48,7 +109,7 @@ namespace ShapeEngine
 
         if (!std::filesystem::exists(projectFilePath))
         {
-            throw std::runtime_error("Project File not found:" + projectFilePath.string());
+            CreateDefaultProjectFile(projectFilePath);
         }
 
         toml::table projectDesc;
@@ -62,19 +123,26 @@ namespace ShapeEngine
             throw std::runtime_error(errMsg);
         }
         std::vector<std::filesystem::path> configFilesToLoad;
-        configFilesToLoad.emplace_back("Config/DefaultEngine.ini");
+        auto projectRoot = projectFilePath.parent_path();
+        configFilesToLoad.emplace_back("Config/DefaultEngine.toml");
         if (const auto gameConfigNode = projectDesc["GameConfigFiles"].as_array())
         {
             for (const auto& element : *gameConfigNode)
             {
                 if (auto pathStr = element.value<std::string>())
                 {
-                    configFilesToLoad.emplace_back(*pathStr);
+                    auto gameConfigPath = projectRoot / *pathStr;
+
+                    if (!std::filesystem::exists(gameConfigPath))
+                    {
+                        CreateDefaultGameConfigFile(gameConfigPath);
+                    }
+
+                    configFilesToLoad.push_back(gameConfigPath);
                 }
             }
         }
         ConfigManager::Get().LoadFromFiles(configFilesToLoad);
-        const std::filesystem::path projectRoot = projectFilePath.parent_path();
         LoadPlugins(projectRoot);
 
         auto primaryGameModuleName = projectDesc["PrimaryGameModuleName"].value_or<std::string>("");

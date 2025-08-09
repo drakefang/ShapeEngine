@@ -57,10 +57,10 @@ function(setup_plugin_deployment PLUGIN_TARGET)
     endif()
 endfunction()
 
-#add_subdirectory(src/ShapeEngine)
-#add_subdirectory(src/ShapeHost)
-#add_subdirectory(src/ShapePlugins)
-add_subdirectory(src/ShapeGameDemo)
+add_subdirectory(src/ShapeEngine)
+add_subdirectory(src/ShapeHost)
+add_subdirectory(src/ShapePlugins)
+#add_subdirectory(src/ShapeGameDemo)
 
 #[[
 set(CoreSrc

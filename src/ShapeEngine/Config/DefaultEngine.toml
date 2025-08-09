@@ -1,0 +1,6 @@
+﻿
+# ShapeEngine - Default Engine Configuration
+# 这是所有项目的基础，优先级最低。
+
+[Engine]
+PrimaryGameModuleName = "DefaultGame" # 一个备用的默认值
