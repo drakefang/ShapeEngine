@@ -1,5 +1,5 @@
 ﻿
-set(PluginName "ShapePlatformPlugin")
+set(PluginName "ShapePlatform")
 
 add_library(${PluginName} SHARED)
 

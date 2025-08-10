@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "Core/EngineTypes.h"
 #include "Core/ISubsystem.h"
 #include "Core/PlatformDefine.h"
 
@@ -18,7 +19,6 @@ namespace ShapeEngine
 {
     class IModule;
     class IModuleInterface;
-    using ModuleFactory = std::function<std::shared_ptr<IModule>()>;
 
     class SHAPE_ENGINE_API ModuleManager final : public IEngineSubSystem
     {
@@ -30,7 +30,7 @@ namespace ShapeEngine
         ModuleManager(const ModuleManager&) = delete;
         ModuleManager& operator=(const ModuleManager&) = delete;
 
-        void RegisterModule(const std::string &moduleName, const ModuleFactory &factory);
+        void RegisterModule(const std::string &moduleName, const ModuleFactoryFunc &factory);
 
         std::shared_ptr<IModuleInterface> LoadModule(const std::string& moduleName);
 
@@ -50,7 +50,7 @@ namespace ShapeEngine
         // 存储已注册但未加载的模块信息
         struct ModuleInfo
         {
-            ModuleFactory Factory;
+            ModuleFactoryFunc Factory;
             std::vector<std::string> Dependencies;
         };
 

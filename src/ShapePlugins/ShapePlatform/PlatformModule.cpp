@@ -9,8 +9,15 @@
 
 #include "App/ConfigManager.h"
 #include "Core/Logger.h"
+#include "Module/PluginModuleRegistry.h"
+#include "PlatformDefine.h"
 
 using namespace ShapeEngine;
+
+namespace ShapePlatform
+{
+    static ScopedModuleRegistrar<PlatformModule, PlatformSDLPluginTag> registrar("PlatformSDL");
+}
 
 void ShapePlatform::PlatformModule::Startup()
 {
@@ -111,6 +118,11 @@ void ShapePlatform::PlatformModule::SetWindowTitle(const std::string& title)
     {
         SDL_SetWindowTitle(window.get(), title.c_str());
     }
+}
+
+const char* ShapePlatform::PlatformModule::GetName() const
+{
+    return "PlatformSDL";
 }
 
 void ShapePlatform::PlatformModule::HandleSDLEvent(const SDL_Event& event)

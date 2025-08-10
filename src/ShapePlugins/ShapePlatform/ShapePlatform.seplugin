@@ -1,0 +1,42 @@
+﻿# ===================================================================
+# ShapeEngine Plugin Descriptor for: SDL Platform Support
+# ===================================================================
+
+# 插件的友好名称，用于UI显示和日志输出。
+FriendlyName = "SDL Platform Support"
+
+# 插件的版本号，用于依赖管理和调试。
+Version = "1.0"
+
+# 此插件是否默认启用。
+# 对于平台层这种基础插件，通常应该设置为 true。
+EnabledByDefault = true
+
+
+# -------------------------------------------------------------------
+# 模块列表
+# -------------------------------------------------------------------
+# 一个插件可以包含一个或多个模块。
+# 每个 [[Modules]] 表代表一个独立的模块定义。
+
+[[Modules]]
+# [必需] 模块的逻辑名称。
+# 这是在 ModuleManager 中注册和依赖解析时使用的唯一标识符。
+# 这个名字必须与 PlatformSDLModule.cpp 中的 ScopedModuleRegistrar 中使用的名字完全匹配。
+Name = "PlatformSDL"
+
+# [必需] 包含此模块实现的动态库的名称 (不含扩展名)。
+# 引擎会根据这个名字去加载 PlatformSDLPlugin.dll / libPlatformSDLPlugin.so 等。
+Library = "PlatformSDLPlugin"
+
+# [必需] 模块的加载阶段。
+# "PreDefault" 确保这个模块在引擎初始化早期、在主游戏模块之前就被加载。这对于平台、渲染等基础服务至关重要。
+# "Default":    与主游戏模块一起加载，或作为其依赖项加载。适合大多数 Gameplay 模块。
+# "PostConfig": 在配置加载后立即加载。
+# "None":       只注册，不自动加载，等待被其他模块按需加载。
+LoadingPhase = "PreDefault"
+
+# [必需] 声明此模块提供的全局服务接口的名称。
+# ServiceRegistry 会根据这个名字，将加载后的模块实例注册到 ServiceLocator。
+# 这个名字必须与 Application 中通过 ServiceRegistry::RegisterInterface<T>() 注册的接口类型名匹配。
+ProvidesService = "IPlatformModule"

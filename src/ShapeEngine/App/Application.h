@@ -8,14 +8,31 @@
 
 #include "DynamicLibrary.h"
 #include "IPlugin.h"
-#include "Core/GameClock.h"
 #include "Core/PlatformDefine.h"
 #include "Core/SubsystemManager.h"
-#include "Core/TimerManager.h"
+#include "Core/EngineTypes.h"
 
 namespace ShapeEngine
 {
     class IPrimaryGameModule;
+
+    struct ModuleDescriptor
+    {
+        std::string Name;
+        std::string Library;
+        std::string Type;
+        std::string ProvidesService;
+        EModuleLoadingPhase LoadingPhase = EModuleLoadingPhase::None;
+    };
+
+    struct PluginDescriptor
+    {
+        std::filesystem::path FilePath;
+        std::string FriendlyName;
+        std::vector<ModuleDescriptor> Modules;
+        bool bIsEnabled = false;
+    };
+
 
     class SHAPE_ENGINE_API Application : public std::enable_shared_from_this<Application>
     {
@@ -40,6 +57,8 @@ namespace ShapeEngine
         void UnloadPlugins();
 
         void RegisterCoreSubsystems();
+        void RegisterServiceInterfaces();
+        void LoadAndRegisterService(const ModuleDescriptor& moduleDesc);
 
     private:
         bool bIsRunning = true;
@@ -51,5 +70,7 @@ namespace ShapeEngine
         std::vector<DynamicLibrary> LoadedLibraries;
 
         SubsystemManager SubsystemManager;
+
+        std::vector<PluginDescriptor> FoundPlugins;
     };
 }

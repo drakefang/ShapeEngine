@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <filesystem>
 #include <string>
 
 #include "Core/PlatformDefine.h"
@@ -10,13 +11,16 @@
 
 namespace ShapeEngine
 {
+    struct PluginDescriptor;
+    struct ModuleDescriptor;
+
     class IPlugin
     {
     public:
         virtual ~IPlugin() = default;
-        virtual void Startup() = 0;
+        virtual void Startup(const PluginDescriptor& descriptor) = 0;
         virtual void Shutdown() = 0;
-        virtual const std::string GetName() const = 0;
+        virtual const std::string& GetName() const = 0;
         virtual uint32_t Version() const = 0;
         virtual void OnLoad() = 0;
         virtual void OnUnLoad() = 0;
