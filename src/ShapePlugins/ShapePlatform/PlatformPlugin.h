@@ -11,8 +11,15 @@ namespace ShapePlatform
     class PlatformPlugin final : public ShapeEngine::IPlugin
     {
     public:
-        virtual void Startup();
-        virtual void Shutdown();
-        virtual std::string_view GetName();
+        virtual void Startup() override;
+        virtual void Shutdown() override;
+
+        const std::string GetName() const override;
+        uint32_t Version() const override;
+        void OnLoad() override;
+        void OnUnLoad() override;
+
+    private:
+        std::string name;
     };
 }

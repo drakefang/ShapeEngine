@@ -79,9 +79,21 @@ namespace ShapeEngine
             return nullptr;
         }
 #if defined(_WIN32)
-        return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(Handle), symbolName.c_str()));
+        void* sym = reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(Handle), symbolName.c_str()));
+        if (!sym)
+        {
+            DWORD err = GetLastError();
+        }
+        return sym;
 #else
-        return dlsym(Handle, symbolName.c_str());
+        dlerror(); // clear existing error
+        void* sym = dlsym(Handle, symbolName.c_str());
+        const char* dlsym_err = dlerror();
+        if (dlsym_err != nullptr)
+        {
+            return nullptr;
+        }
+        return sym;
 #endif
     }
 }
