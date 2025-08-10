@@ -32,6 +32,8 @@ namespace ShapePlatform
         void GetWindowSize(int& width, int& height) override;
         void SetWindowTitle(const std::string& title) override;
 
+        const char* GetName() const override;
+
     private:
         void HandleSDLEvent(const SDL_Event& event);
 

@@ -13,3 +13,8 @@
 #else
     #define SHAPE_PLATFORM_API // ...
 #endif
+
+namespace ShapePlatform
+{
+    struct PlatformSDLPluginTag {};
+}

@@ -16,6 +16,7 @@ namespace ShapeEngine
         virtual void Shutdown() {}
 
         [[nodiscard]] virtual std::vector<std::string> GetDependencies() const { return {}; }
+        virtual const char* GetName() const { return "IModule"; }
     };
 
     class IModuleInterface : public virtual IModule

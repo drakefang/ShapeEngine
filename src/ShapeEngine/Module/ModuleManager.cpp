@@ -16,7 +16,7 @@ namespace ShapeEngine
         return instance;
     }
 
-    void ModuleManager::RegisterModule(const std::string& moduleName, const ModuleFactory& factory)
+    void ModuleManager::RegisterModule(const std::string& moduleName, const ModuleFactoryFunc& factory)
     {
         if (RegisteredModules.contains(moduleName))
         {

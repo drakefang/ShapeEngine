@@ -42,6 +42,17 @@ function(setup_plugin_deployment PLUGIN_TARGET)
 
         COMMENT "Deploying ${PLUGIN_TARGET} to ${PLUGIN_DEPLOY_DIRECTORY}"
     )
+    set(SEPLUGIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${PLUGIN_TARGET}.seplugin")
+    if(EXISTS ${SEPLUGIN_FILE})
+        add_custom_command(
+                TARGET ${PLUGIN_TARGET}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${SEPLUGIN_FILE}"
+                "${PLUGIN_DEPLOY_DIRECTORY}/${PLUGIN_TARGET}.seplugin"
+                COMMENT "Deploying ${PLUGIN_TARGET}.seplugin to ${PLUGIN_DEPLOY_DIRECTORY}"
+        )
+    endif()
 
     if (MSVC)
         add_custom_command(

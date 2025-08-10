@@ -13,8 +13,11 @@
 
 #include <toml++/toml.h>
 
+#include "Core/GameClock.h"
+#include "Core/TimerManager.h"
 #include "Module/IPlatformModule.h"
 #include "Service/ServiceLocator.h"
+#include "Service/ServiceRegistry.h"
 
 namespace ShapeEngine
 {
@@ -150,6 +153,23 @@ Height = 720
             ConfigManager::Get().LoadFromFiles(configFilesToLoad);
             LoadPlugins(projectRoot);
 
+            Logger()->info("--- Loading PreDefault Modules ---");
+            for (const auto& plugin : FoundPlugins)
+            {
+                if (!plugin.bIsEnabled)
+                {
+                    continue;
+                }
+                for (const auto& moduleDesc : plugin.Modules)
+                {
+                    if (moduleDesc.LoadingPhase == EModuleLoadingPhase::PreDefault)
+                    {
+                        LoadAndRegisterService(moduleDesc);
+                    }
+                }
+            }
+
+            Logger()->info("--- Loading Primary Game Module ---");
             auto primaryGameModuleName = projectDesc["PrimaryGameModuleName"].value_or<std::string>("");
             if (primaryGameModuleName.empty())
             {
@@ -235,7 +255,7 @@ Height = 720
         }
         AppTimerManager->Tick(gameTime);
 
-        if (auto Platform = ServiceLocator::Get<IPlatformModule>())
+        if (const auto Platform = ServiceLocator::Get<IPlatformModule>())
         {
             Platform->PumpEvents();
         }
@@ -248,6 +268,10 @@ Height = 720
 
     void Application::LoadPlugins(const std::filesystem::path& projectRoot)
     {
+        Plugins.clear();
+        LoadedLibraries.clear();
+        FoundPlugins.clear();
+
         const std::filesystem::path pluginsPath = projectRoot / ConfigManager::Get().GetValueOrDefault<std::string>("Plugins.Path", "Plugins/");
         Logger()->info("Scanning for plugins in: {}", pluginsPath.string());
 
@@ -256,35 +280,82 @@ Height = 720
             Logger()->warn("Plugins directory not found: {}", pluginsPath.string());
             return;
         }
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(pluginsPath))
+        {
+            if (entry.is_regular_file() && entry.path().extension() == ".seplugin")
+            {
+                try
+                {
+                    toml::table pluginDescToml = toml::parse_file(entry.path().string());
+                    PluginDescriptor desc;
+                    desc.FilePath = entry.path();
+                    desc.FriendlyName = pluginDescToml["FriendlyName"].value_or("");
+                    desc.bIsEnabled = pluginDescToml["EnabledByDefault"].value_or(false);
+
+                    if (auto modulesNode = pluginDescToml["Modules"].as_array())
+                    {
+                        for (const auto& moduleElem : *modulesNode)
+                        {
+                            if (auto moduleTbl = moduleElem.as_table())
+                            {
+                                ModuleDescriptor modDesc;
+                                modDesc.Name = (*moduleTbl)["Name"].value_or("");
+                                modDesc.Library = (*moduleTbl)["Library"].value_or("");
+                                modDesc.ProvidesService = (*moduleTbl)["ProvidesService"].value_or("");
+                                modDesc.Type = (*moduleTbl)["Type"].value_or("");
+                                if (!modDesc.Name.empty() && !modDesc.Library.empty())
+                                {
+                                    desc.Modules.push_back(modDesc);
+                                }
+                            }
+                        }
+                    }
+                    FoundPlugins.push_back(desc);
+                }
+                catch (const toml::parse_error& err)
+                {
+                    Logger()->warn("seplugin load failed: {}", err.what());
+                }
+            }
+        }
+        Logger()->info("Discovered {} plugins.", FoundPlugins.size());
 
         using FCreatePluginFunc = IPlugin* (*)();
 
-        for (const auto& entry : std::filesystem::directory_iterator(pluginsPath))
+        for (const auto& pluginDesc : FoundPlugins)
         {
-            const auto& path = entry.path();
+            if (!pluginDesc.bIsEnabled)
+            {
+                Logger()->info("Plugin '{}' is disabled, skipping.", pluginDesc.FriendlyName);
+                continue;
+            }
+            if (pluginDesc.Modules.empty())
+            {
+                continue;
+            }
+            const std::string& libraryName = pluginDesc.Modules[0].Library;
 #if defined(_WIN32)
-            const std::string extension = ".dll";
+            const std::string libFileName = libraryName + ".dll";
 #elif defined(__APPLE__)
-            const std::string extension = ".dylib";
+            const std::string libFileName = "lib" + libraryName + ".dylib";
 #else
-            const std::string extension = ".so";
+            const std::string libFileName = "lib" + libraryName + ".so";
 #endif
-            if (!entry.is_regular_file() || path.extension() != extension) continue;
-
-            DynamicLibrary library(path);
+            std::filesystem::path libraryPath = pluginDesc.FilePath.parent_path() / libFileName;
+            DynamicLibrary library(libraryPath);
             if (!library.IsValid()) continue;
 
             const auto createPluginFunc = reinterpret_cast<FCreatePluginFunc>(library.GetSymbol("CreatePlugin"));
             if (!createPluginFunc)
             {
-                Logger()->warn("Plugin '{}' does not export a valid 'CreatePlugin' entry point. Skipping.", path.string());
+                Logger()->warn("Plugin '{}' does not export a valid 'CreatePlugin' entry point. Skipping.", libraryPath.string());
                 continue;
             }
 
             if (std::unique_ptr<IPlugin> plugin(createPluginFunc()); plugin)
             {
-                Logger()->info("Plugin '{}' loaded successfully. Starting up...", path.filename().string());
-                plugin->Startup();
+                Logger()->info("Loading Plugin: {}, Starting up...", pluginDesc.FriendlyName);
+                plugin->Startup(pluginDesc);
                 Plugins.push_back(std::move(plugin));
                 LoadedLibraries.push_back(std::move(library));
             }
@@ -309,5 +380,29 @@ Height = 720
         SubsystemManager.RegisterSubsystem<GameClock>();
         SubsystemManager.RegisterSubsystem<TimerManager>();
         SubsystemManager.RegisterSubsystem<ModuleManager>();
+    }
+
+    void Application::RegisterServiceInterfaces()
+    {
+        auto& registry = ServiceRegistry::Get();
+        registry.RegisterInterface<IPlatformModule>();
+    }
+
+    void Application::LoadAndRegisterService(const ModuleDescriptor& moduleDesc)
+    {
+        try
+        {
+            auto module_ptr = ModuleManager::Get().LoadModule(moduleDesc.Name);
+            if (module_ptr && !moduleDesc.ProvidesService.empty())
+            {
+                ServiceRegistry::Get().Provide(moduleDesc.ProvidesService, module_ptr);
+                Logger()->info("Service '{}' provided by module '{}' has been registered.", moduleDesc.ProvidesService, moduleDesc.Name);
+            }
+        }
+        catch (const std::exception& e)
+        {
+            Logger()->critical("Failed to load module '{}': {}", moduleDesc.Name, e.what());
+            throw;
+        }
     }
 }

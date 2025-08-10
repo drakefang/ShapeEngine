@@ -20,6 +20,7 @@ set(CoreSrc
     Core/TimerManager.h
     Core/TimerManager.cpp
     Core/PlatformDefine.h
+    Core/EngineTypes.h
     Core/Coroutine/Task.h
 )
 
@@ -33,17 +34,21 @@ set(AppSrc
     App/IPlugin.h
     App/IPrimaryGameModule.h
     App/EngineMain.cpp
+    App/PluginBase.h
 )
 
 set(ModuleSrc
     Module/IModuleInterface.h
     Module/ModuleManager.cpp
     Module/ModuleManager.h
+    Module/PluginModuleRegistry.h
 )
 
 set(ServiceSrc
     Service/ServiceLocator.h
     Service/ServiceLocator.cpp
+    Service/ServiceRegistry.h
+    Service/ServiceRegistry.cpp
 )
 
 target_sources(${EngineName} PRIVATE

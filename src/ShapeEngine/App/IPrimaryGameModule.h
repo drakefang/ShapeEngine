@@ -7,6 +7,8 @@
 
 namespace ShapeEngine
 {
+    struct GameTime;
+
     class IPrimaryGameModule : public IModuleInterface
     {
     public:

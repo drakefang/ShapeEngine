@@ -6,38 +6,21 @@
 
 #include "PlatformDefine.h"
 #include "PlatformModule.h"
+#include "App/Application.h"
 #include "Core/Logger.h"
 #include "Module/ModuleManager.h"
+#include "Module/PluginModuleRegistry.h"
 #include "Service/ServiceLocator.h"
 
 
 namespace ShapePlatform
 {
-    void PlatformPlugin::Startup()
-    {
-        name = "ShapePlatform";
-        ShapeEngine::ModuleManager::Get().RegisterModule("PlatformSDL", []() {
-            return std::make_unique<PlatformModule>();
-        });
-
-        try
-        {
-            auto platformModule = ShapeEngine::LoadModuleChecked<ShapeEngine::IPlatformModule>("PlatformSDL");
-            ShapeEngine::ServiceLocator::Provide<ShapeEngine::IPlatformModule>(platformModule);
-
-            ShapeEngine::Logger()->info("PlatformSDL module loaded and registered as a service.");
-        }
-        catch (const std::exception& e)
-        {
-            ShapeEngine::Logger()->critical("Failed to load PlatformSDL module: {}", e.what());
-        }
-    }
-
     void PlatformPlugin::Shutdown()
     {
+        ShapeEngine::Logger()->info("{} shutting down...");
     }
 
-    const std::string PlatformPlugin::GetName() const
+    const std::string& PlatformPlugin::GetName() const
     {
         return name;
     }
