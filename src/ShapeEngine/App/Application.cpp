@@ -93,77 +93,94 @@ Height = 720
         return std::make_shared<Application>();
     }
 
-    void Application::Initialize(const std::filesystem::path& projectFilePath)
+    bool Application::Initialize(const std::filesystem::path& projectFilePath)
     {
-        Logger()->info("==================================================");
-        Logger()->info("Application Initializing...");
-        Logger()->info("==================================================");
-
-        std::shared_ptr<GameClock> clockPtr(&AppGameClock, [](GameClock*){});
-        ServiceLocator::Provide(clockPtr);
-
-        std::shared_ptr<TimerManager> timerPtr(&AppTimerManager, [](TimerManager*){});
-        ServiceLocator::Provide(timerPtr);
-
-        ServiceLocator::Provide(shared_from_this());
-
-        if (!std::filesystem::exists(projectFilePath))
-        {
-            CreateDefaultProjectFile(projectFilePath);
-        }
-
-        toml::table projectDesc;
         try
         {
-            projectDesc = toml::parse_file(projectFilePath.string());
-        }
-        catch (const toml::parse_error& err)
-        {
-            const std::string errMsg = "Failed to parse TOML file:'" + projectFilePath.string() + "':\n" + err.what();
-            throw std::runtime_error(errMsg);
-        }
-        std::vector<std::filesystem::path> configFilesToLoad;
-        auto projectRoot = projectFilePath.parent_path();
-        configFilesToLoad.emplace_back("Config/DefaultEngine.toml");
-        if (const auto gameConfigNode = projectDesc["GameConfigFiles"].as_array())
-        {
-            for (const auto& element : *gameConfigNode)
+            Logger()->info("==================================================");
+            Logger()->info("Application Initializing...");
+            Logger()->info("==================================================");
+
+            std::shared_ptr<GameClock> clockPtr(&AppGameClock, [](GameClock*){});
+            ServiceLocator::Provide(clockPtr);
+
+            std::shared_ptr<TimerManager> timerPtr(&AppTimerManager, [](TimerManager*){});
+            ServiceLocator::Provide(timerPtr);
+
+            ServiceLocator::Provide(shared_from_this());
+
+            if (!std::filesystem::exists(projectFilePath))
             {
-                if (auto pathStr = element.value<std::string>())
+                CreateDefaultProjectFile(projectFilePath);
+            }
+
+            toml::table projectDesc;
+            try
+            {
+                projectDesc = toml::parse_file(projectFilePath.string());
+            }
+            catch (const toml::parse_error& err)
+            {
+                const std::string errMsg = "Failed to parse TOML file:'" + projectFilePath.string() + "':\n" + err.what();
+                throw std::runtime_error(errMsg);
+            }
+            std::vector<std::filesystem::path> configFilesToLoad;
+            auto projectRoot = projectFilePath.parent_path();
+            configFilesToLoad.emplace_back("Config/DefaultEngine.toml");
+            if (const auto gameConfigNode = projectDesc["GameConfigFiles"].as_array())
+            {
+                for (const auto& element : *gameConfigNode)
                 {
-                    auto gameConfigPath = projectRoot / *pathStr;
-
-                    if (!std::filesystem::exists(gameConfigPath))
+                    if (auto pathStr = element.value<std::string>())
                     {
-                        CreateDefaultGameConfigFile(gameConfigPath);
-                    }
+                        auto gameConfigPath = projectRoot / *pathStr;
 
-                    configFilesToLoad.push_back(gameConfigPath);
+                        if (!std::filesystem::exists(gameConfigPath))
+                        {
+                            CreateDefaultGameConfigFile(gameConfigPath);
+                        }
+
+                        configFilesToLoad.push_back(gameConfigPath);
+                    }
                 }
             }
-        }
-        ConfigManager::Get().LoadFromFiles(configFilesToLoad);
-        LoadPlugins(projectRoot);
+            ConfigManager::Get().LoadFromFiles(configFilesToLoad);
+            LoadPlugins(projectRoot);
 
-        auto primaryGameModuleName = projectDesc["PrimaryGameModuleName"].value_or<std::string>("");
-        if (primaryGameModuleName.empty())
+            auto primaryGameModuleName = projectDesc["PrimaryGameModuleName"].value_or<std::string>("");
+            if (primaryGameModuleName.empty())
+            {
+                primaryGameModuleName = ConfigManager::Get().GetValueOrDefault<std::string>("Engine.PrimaryGameModule", "");
+            }
+            if (primaryGameModuleName.empty())
+            {
+                throw std::runtime_error("PrimaryGameModuleName not specified in project file or config.");
+            }
+
+            Logger()->info("Loading primary game module: {}", primaryGameModuleName);
+            PrimaryGameModule = LoadModuleChecked<IPrimaryGameModule>(primaryGameModuleName);
+
+            bIsRunning = true;
+            bIsInitialized = true;
+            Logger()->info("Application initialization complete.");
+            return true;
+        }
+        catch (const std::exception& err)
         {
-            primaryGameModuleName = ConfigManager::Get().GetValueOrDefault<std::string>("Engine.PrimaryGameModule", "");
+            Logger()->critical("Application initialization failed: {}", err.what());
+            bIsRunning = false;
+            bIsInitialized = false;
+            return false;
         }
-        if (primaryGameModuleName.empty())
-        {
-            throw std::runtime_error("PrimaryGameModuleName not specified in project file or config.");
-        }
-
-        Logger()->info("Loading primary game module: {}", primaryGameModuleName);
-        PrimaryGameModule = LoadModuleChecked<IPrimaryGameModule>(primaryGameModuleName);
-
-        bIsRunning = true;
-        Logger()->info("Application initialization complete.");
     }
 
     void Application::Run()
     {
+        if (!bIsInitialized)
+        {
+            Logger()->error("Application cannot run because it failed to initialize.");
+            return;
+        }
         while (bIsRunning)
         {
             Tick();
@@ -172,16 +189,27 @@ Height = 720
 
     void Application::Shutdown()
     {
+        if (!bIsRunning && !bIsInitialized)
+        {
+            Logger()->info("Application shutting down after a failed initialization.");
+            UnloadPlugins();
+            return;
+        }
+
         if (!bIsRunning) return;
 
         Logger()->info("==================================================");
         Logger()->info("Application Shutting Down...");
         Logger()->info("==================================================");
 
-        ModuleManager::Get().ShutdownAllModules();
+        if (bIsInitialized)
+        {
+            ModuleManager::Get().ShutdownAllModules();
+        }
         UnloadPlugins();
 
         bIsRunning = false;
+        bIsInitialized = false;
         Logger()->info("Application shutdown complete.");
     }
 

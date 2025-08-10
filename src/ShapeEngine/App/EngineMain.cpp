@@ -49,39 +49,51 @@ extern "C"
     {
         SetupLogger();
 
-        if (argc < 2)
-        {
-            Logger()->critical("Usage: ShapeHost.exe <path-to-project.seproject> [-server]");
-            return -1;
-        }
-        fs::path userProvidedPath = argv[1];
-        fs::path projectFilePath;
-        if (userProvidedPath.is_absolute())
-        {
-            projectFilePath = userProvidedPath;
-        }
-        else
-        {
-            fs::path exeDir = GetExecutablePath().parent_path();
-            projectFilePath = exeDir / userProvidedPath;
-        }
-        projectFilePath = fs::weakly_canonical(projectFilePath);
-
-
+        std::shared_ptr<Application> app = nullptr;
+        int resultCode = 0;
         try
         {
-            auto app = Application::Create();
-            app->Initialize(projectFilePath);
-            app->Run();
-            app->Shutdown();
+            if (argc < 2)
+            {
+                Logger()->critical("Usage: ShapeHost.exe <path-to-project.seproject> [-server]");
+                resultCode = -1;
+            }
+            fs::path userProvidedPath = argv[1];
+            fs::path projectFilePath;
+            if (userProvidedPath.is_absolute())
+            {
+                projectFilePath = userProvidedPath;
+            }
+            else
+            {
+                fs::path exeDir = GetExecutablePath().parent_path();
+                projectFilePath = exeDir / userProvidedPath;
+            }
+            projectFilePath = fs::weakly_canonical(projectFilePath);
+
+            app = Application::Create();
+            if (app->Initialize(projectFilePath))
+            {
+                app->Run();
+            }
+            else
+            {
+                Logger()->critical("Application failed to initialize.");
+                resultCode = -1;
+            }
         }
         catch (const std::exception& e)
         {
             Logger()->critical("An unhandled exception occurred in engine: {}", e.what());
-            return -1;
+            resultCode = -1;
+        }
+
+        if (app)
+        {
+            app->Shutdown();
         }
         ShutdownLogger();
 
-        return 0;
+        return resultCode;
     }
 }
