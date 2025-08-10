@@ -6,12 +6,13 @@
 
 #include <chrono>
 
+#include "ISubsystem.h"
 #include "Core/GameTime.h"
 #include "Core/PlatformDefine.h"
 
 namespace ShapeEngine
 {
-    class SHAPE_ENGINE_API GameClock
+    class SHAPE_ENGINE_API GameClock : public IEngineSubSystem
     {
     public:
         GameClock();
@@ -22,6 +23,11 @@ namespace ShapeEngine
         void SetGlobalTimeDilation(float dilation);
         float GetGlobalTimeDilation() const { return GlobalTimeDilation; }
         bool IsPaused() const { return GlobalTimeDilation == 0.0f; }
+
+        const char* GetName() const override
+        {
+            return "GameClock";
+        }
 
     private:
         GameTime CurrentTime;

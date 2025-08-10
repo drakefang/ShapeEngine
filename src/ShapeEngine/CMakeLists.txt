@@ -8,6 +8,8 @@ set(CoreSrc
     Core/Archive.cpp
     Core/BinaryArchive.h
     Core/BinaryArchive.cpp
+    Core/SubsystemManager.h
+    Core/SubsystemManager.cpp
     Core/Logger.h
     Core/Logger.cpp
     Core/Object.h

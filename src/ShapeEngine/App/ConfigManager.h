@@ -14,17 +14,19 @@
 #include <functional>
 #include <utility>
 
+#include "Core/ISubsystem.h"
+
 namespace ShapeEngine
 {
     using OnConfigChangedDelegate = std::function<void(const std::string& key, const std::any& newValue)>;
 
-    class SHAPE_ENGINE_API ConfigManager
+    class SHAPE_ENGINE_API ConfigManager final : public IEngineSubSystem
     {
     public:
         static ConfigManager& Get();
 
         ConfigManager();
-        ~ConfigManager();
+        ~ConfigManager() override;
 
         ConfigManager(ConfigManager&&) noexcept;
         ConfigManager& operator=(ConfigManager&&) noexcept;
@@ -46,6 +48,8 @@ namespace ShapeEngine
         template<typename T>
         T GetValueOrDefault(const std::string& key, T defaultValue) const;
 
+        virtual const char* GetName() const override { return "ConfigManager"; }
+
     private:
         std::unique_ptr<class Impl> pimpl;
 
@@ -62,14 +66,13 @@ namespace ShapeEngine
     template<typename T>
     std::optional<T> ConfigManager::GetValue(const std::string& key) const
     {
-        std::any result = GetValueAny(key);
-        if (result.has_value())
+        if (std::any result = GetValueAny(key); result.has_value())
         {
             try
             {
                 return std::any_cast<T>(result);
             }
-            catch (const std::bad_any_cast& e)
+            catch ([[maybe_unused]] const std::bad_any_cast& e)
             {
                 return std::nullopt;
             }
