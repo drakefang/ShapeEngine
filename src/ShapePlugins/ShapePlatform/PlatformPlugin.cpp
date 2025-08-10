@@ -15,6 +15,7 @@ namespace ShapePlatform
 {
     void PlatformPlugin::Startup()
     {
+        name = "ShapePlatform";
         ShapeEngine::ModuleManager::Get().RegisterModule("PlatformSDL", []() {
             return std::make_unique<PlatformModule>();
         });
@@ -36,9 +37,22 @@ namespace ShapePlatform
     {
     }
 
-    std::string_view PlatformPlugin::GetName()
+    const std::string PlatformPlugin::GetName() const
     {
-        return "ShapePlatform";
+        return name;
+    }
+
+    uint32_t PlatformPlugin::Version() const
+    {
+        return 0;
+    }
+
+    void PlatformPlugin::OnLoad()
+    {
+    }
+
+    void PlatformPlugin::OnUnLoad()
+    {
     }
 }
 

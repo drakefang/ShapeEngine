@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <string_view>
+#include <string>
 
 #include "Core/PlatformDefine.h"
 
@@ -16,7 +16,10 @@ namespace ShapeEngine
         virtual ~IPlugin() = default;
         virtual void Startup() = 0;
         virtual void Shutdown() = 0;
-        virtual std::string_view GetName() = 0;
+        virtual const std::string GetName() const = 0;
+        virtual uint32_t Version() const = 0;
+        virtual void OnLoad() = 0;
+        virtual void OnUnLoad() = 0;
     };
 }
 
