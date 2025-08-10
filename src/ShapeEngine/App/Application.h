@@ -27,7 +27,7 @@ namespace ShapeEngine
 
         static std::shared_ptr<Application> Create();
 
-        void Initialize(const std::filesystem::path& projectFilePath);
+        bool Initialize(const std::filesystem::path& projectFilePath);
         void Run();
         void Shutdown();
 
@@ -38,6 +38,7 @@ namespace ShapeEngine
 
     private:
         bool bIsRunning = true;
+        bool bIsInitialized = false;
 
         std::shared_ptr<IPrimaryGameModule> PrimaryGameModule = nullptr;
 

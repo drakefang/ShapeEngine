@@ -17,7 +17,7 @@ void ShapePlatform::PlatformModule::Startup()
     IPlatformModule::Startup();
     Logger()->info("Starting PlatformSDL Module...");
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0)
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
     {
         const std::string errorMsg = "Failed to initialize SDL: " + std::string(SDL_GetError());
         Logger()->critical(errorMsg);
@@ -36,8 +36,8 @@ void ShapePlatform::PlatformModule::Startup()
         windowFlags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    m_Window.reset(SDL_CreateWindow(title.c_str(), width, height, windowFlags));
-    if (!m_Window)
+    window.reset(SDL_CreateWindow(title.c_str(), width, height, windowFlags));
+    if (!window)
     {
         const std::string errorMsg = "Failed to create SDL window: " + std::string(SDL_GetError());
         Logger()->critical(errorMsg);
@@ -51,7 +51,7 @@ void ShapePlatform::PlatformModule::Startup()
 void ShapePlatform::PlatformModule::Shutdown()
 {
     Logger()->info("Shutting down PlatformSDL Module...");
-    m_Window.reset();
+    window.reset();
     SDL_Quit();
     Logger()->info("PlatformSDL Module shut down.");
 }
@@ -67,10 +67,10 @@ void ShapePlatform::PlatformModule::PumpEvents()
 
 void* ShapePlatform::PlatformModule::GetNativeWindowHandle()
 {
-    if (!m_Window) return nullptr;
+    if (!window) return nullptr;
 
 #if defined(SDL_PLATFORM_WIN32)
-    return SDL_GetPointerProperty(SDL_GetWindowProperties(m_Window.get()), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
+    return SDL_GetPointerProperty(SDL_GetWindowProperties(window.get()), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
 #elif defined(SDL_PLATFORM_MACOS)
     return SDL_GetPointerProperty(SDL_GetWindowProperties(m_Window.get()), SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
 #elif defined(SDL_PLATFORM_LINUX)
@@ -94,9 +94,9 @@ void* ShapePlatform::PlatformModule::GetNativeWindowHandle()
 
 void ShapePlatform::PlatformModule::GetWindowSize(int& width, int& height)
 {
-    if (m_Window)
+    if (window)
     {
-        SDL_GetWindowSize(m_Window.get(), &width, &height);
+        SDL_GetWindowSize(window.get(), &width, &height);
     }
     else
     {
@@ -107,9 +107,9 @@ void ShapePlatform::PlatformModule::GetWindowSize(int& width, int& height)
 
 void ShapePlatform::PlatformModule::SetWindowTitle(const std::string& title)
 {
-    if (m_Window)
+    if (window)
     {
-        SDL_SetWindowTitle(m_Window.get(), title.c_str());
+        SDL_SetWindowTitle(window.get(), title.c_str());
     }
 }
 

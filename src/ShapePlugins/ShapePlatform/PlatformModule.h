@@ -35,7 +35,6 @@ namespace ShapePlatform
     private:
         void HandleSDLEvent(const SDL_Event& event);
 
-        //SDL_Window* m_Window = nullptr;
-        std::unique_ptr<SDL_Window, WindowDeleter> m_Window;
+        std::unique_ptr<SDL_Window, WindowDeleter> window;
     };
 }
