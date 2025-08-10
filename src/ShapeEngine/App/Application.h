@@ -10,6 +10,7 @@
 #include "IPlugin.h"
 #include "Core/GameClock.h"
 #include "Core/PlatformDefine.h"
+#include "Core/SubsystemManager.h"
 #include "Core/TimerManager.h"
 
 namespace ShapeEngine
@@ -19,8 +20,7 @@ namespace ShapeEngine
     class SHAPE_ENGINE_API Application : public std::enable_shared_from_this<Application>
     {
     public:
-        Application();
-        ~Application();
+        virtual ~Application();
 
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;
@@ -31,10 +31,15 @@ namespace ShapeEngine
         void Run();
         void Shutdown();
 
+    protected:
+        Application();
+
     private:
         void Tick();
         void LoadPlugins(const std::filesystem::path& projectRoot);
         void UnloadPlugins();
+
+        void RegisterCoreSubsystems();
 
     private:
         bool bIsRunning = true;
@@ -45,7 +50,6 @@ namespace ShapeEngine
         std::vector<std::unique_ptr<IPlugin>> Plugins;
         std::vector<DynamicLibrary> LoadedLibraries;
 
-        GameClock AppGameClock;
-        TimerManager AppTimerManager;
+        SubsystemManager SubsystemManager;
     };
 }

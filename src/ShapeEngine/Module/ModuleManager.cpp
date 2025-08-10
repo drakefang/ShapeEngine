@@ -102,6 +102,11 @@ namespace ShapeEngine
         StartupOrder.clear();
     }
 
+    const char* ModuleManager::GetName() const noexcept
+    {
+        return "ModuleManager";
+    }
+
     void ModuleManager::TopologicalSort(
         const std::string& moduleName,
         std::vector<std::string>& sortedList,

@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "Core/ISubsystem.h"
 #include "Core/PlatformDefine.h"
 
 namespace ShapeEngine
@@ -19,11 +20,13 @@ namespace ShapeEngine
     class IModuleInterface;
     using ModuleFactory = std::function<std::shared_ptr<IModule>()>;
 
-    class SHAPE_ENGINE_API ModuleManager
+    class SHAPE_ENGINE_API ModuleManager final : public IEngineSubSystem
     {
     public:
         static ModuleManager& Get();
 
+        ModuleManager() = default;
+        ~ModuleManager() = default;
         ModuleManager(const ModuleManager&) = delete;
         ModuleManager& operator=(const ModuleManager&) = delete;
 
@@ -35,10 +38,9 @@ namespace ShapeEngine
 
         void ShutdownAllModules();
 
-    private:
-        ModuleManager() = default;
-        ~ModuleManager() = default;
+        virtual const char* GetName() const noexcept override;
 
+    private:
         // 拓扑排序算法，用于计算正确的加载顺序
         enum class EVisitState { Unvisited, Visiting, Visited };
         void TopologicalSort(const std::string& moduleName,

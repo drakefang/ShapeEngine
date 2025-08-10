@@ -178,6 +178,11 @@ namespace ShapeEngine
         Timers.clear();
     }
 
+    const char* TimerManager::GetName() const noexcept
+    {
+        return "TimerManager";
+    }
+
     TimerManager::TimerData* TimerManager::FindTimer(const TimerHandle& handle)
     {
         if (!handle.IsValid())

@@ -13,6 +13,7 @@
 
 #include <toml++/toml.h>
 
+#include "Module/IPlatformModule.h"
 #include "Service/ServiceLocator.h"
 
 namespace ShapeEngine
@@ -22,10 +23,9 @@ namespace ShapeEngine
         Logger()->info("Project file not found. Creating a default one at: {}", projectFilePath.string());
 
         // 从路径中提取项目名称作为默认模块名
-        std::string defaultModuleName = projectFilePath.stem().string();
+        const std::string defaultModuleName = projectFilePath.stem().string();
 
-        std::ofstream projectFile(projectFilePath);
-        if (projectFile.is_open())
+        if (std::ofstream projectFile(projectFilePath); projectFile.is_open())
         {
             projectFile << R"(# ShapeEngine Project Descriptor - Auto-generated
 # This file describes your game project to the engine.
@@ -57,8 +57,7 @@ GameConfigFiles = [
         // 确保 Config/ 目录存在
         std::filesystem::create_directories(configFilePath.parent_path());
 
-        std::ofstream configFile(configFilePath);
-        if (configFile.is_open())
+        if (std::ofstream configFile(configFilePath); configFile.is_open())
         {
             configFile << R"(# MyGame - Default Game Configuration
 # This file overrides settings from the engine's DefaultEngine.toml.
@@ -78,34 +77,38 @@ Height = 720
 
     Application::Application()
     {
+        RegisterCoreSubsystems();
     }
 
     Application::~Application()
     {
-        if (bIsRunning)
+        if (bIsInitialized)
         {
             Shutdown();
         }
     }
 
+    class MakeSharedEnabler final : public Application {};
+
     std::shared_ptr<Application> Application::Create()
     {
-        return std::make_shared<Application>();
+        return std::make_shared<MakeSharedEnabler>();
     }
 
     bool Application::Initialize(const std::filesystem::path& projectFilePath)
     {
         try
         {
+            SubsystemManager.StartupAll();
+
             Logger()->info("==================================================");
             Logger()->info("Application Initializing...");
             Logger()->info("==================================================");
 
-            std::shared_ptr<GameClock> clockPtr(&AppGameClock, [](GameClock*){});
-            ServiceLocator::Provide(clockPtr);
-
-            std::shared_ptr<TimerManager> timerPtr(&AppTimerManager, [](TimerManager*){});
-            ServiceLocator::Provide(timerPtr);
+            ServiceLocator::Provide(SubsystemManager.GetSubsystem<GameClock>());
+            ServiceLocator::Provide(SubsystemManager.GetSubsystem<ConfigManager>());
+            ServiceLocator::Provide(SubsystemManager.GetSubsystem<TimerManager>());
+            ServiceLocator::Provide(SubsystemManager.GetSubsystem<ModuleManager>());
 
             ServiceLocator::Provide(shared_from_this());
 
@@ -125,7 +128,7 @@ Height = 720
                 throw std::runtime_error(errMsg);
             }
             std::vector<std::filesystem::path> configFilesToLoad;
-            auto projectRoot = projectFilePath.parent_path();
+            const auto projectRoot = projectFilePath.parent_path();
             configFilesToLoad.emplace_back("Config/DefaultEngine.toml");
             if (const auto gameConfigNode = projectDesc["GameConfigFiles"].as_array())
             {
@@ -193,6 +196,7 @@ Height = 720
         {
             Logger()->info("Application shutting down after a failed initialization.");
             UnloadPlugins();
+            SubsystemManager.ShutdownAll();
             return;
         }
 
@@ -207,6 +211,7 @@ Height = 720
             ModuleManager::Get().ShutdownAllModules();
         }
         UnloadPlugins();
+        SubsystemManager.ShutdownAll();
 
         bIsRunning = false;
         bIsInitialized = false;
@@ -215,10 +220,25 @@ Height = 720
 
     void Application::Tick()
     {
-        AppGameClock.Tick();
-        const GameTime& gameTime = AppGameClock.GetCurrentTime();
+        const auto AppGameClock = ServiceLocator::Get<GameClock>();
+        if (!AppGameClock)
+        {
+            return;
+        }
+        AppGameClock->Tick();
+        const GameTime& gameTime = AppGameClock->GetCurrentTime();
 
-        AppTimerManager.Tick(gameTime);
+        const auto AppTimerManager = ServiceLocator::Get<TimerManager>();
+        if (!AppTimerManager)
+        {
+            return;
+        }
+        AppTimerManager->Tick(gameTime);
+
+        if (auto Platform = ServiceLocator::Get<IPlatformModule>())
+        {
+            Platform->PumpEvents();
+        }
 
         if (PrimaryGameModule)
         {
@@ -281,5 +301,13 @@ Height = 720
 
         LoadedLibraries.clear();
         Logger()->info("All plugins have been shut down and unloaded.");
+    }
+
+    void Application::RegisterCoreSubsystems()
+    {
+        SubsystemManager.RegisterSubsystem<ConfigManager>();
+        SubsystemManager.RegisterSubsystem<GameClock>();
+        SubsystemManager.RegisterSubsystem<TimerManager>();
+        SubsystemManager.RegisterSubsystem<ModuleManager>();
     }
 }

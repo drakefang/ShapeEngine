@@ -11,6 +11,8 @@
 #include <variant>
 #include <coroutine>
 
+#include "ISubsystem.h"
+
 namespace ShapeEngine
 {
     class TimerManager;
@@ -65,7 +67,7 @@ namespace ShapeEngine
     };
 
 
-    class SHAPE_ENGINE_API TimerManager
+    class SHAPE_ENGINE_API TimerManager final : public IEngineSubSystem
     {
     public:
         TimerManager() = default;
@@ -87,6 +89,8 @@ namespace ShapeEngine
         [[nodiscard]] float GetTimerRemaining(const TimerHandle& handle) const;
 
         void ClearAllTimers();
+
+        const char* GetName() const noexcept override;
 
     private:
         friend struct TimerAwaitable;
